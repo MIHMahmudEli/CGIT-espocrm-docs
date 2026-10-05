@@ -323,6 +323,52 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   font-size:13px;font-weight:600}
 .ui-cur .in.flash{background:#fff6d6;border-color:#e7b93c;
   box-shadow:0 0 0 3px rgba(242,201,76,.28);font-weight:700}
+/* agenda week calendar */
+.ui.cal-ui{background:#fff}
+.ui-ctb{background:#fff;border-bottom:1px solid #e4e9ef;padding:9px 16px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cgrp{display:inline-flex;gap:4px;align-items:center}
+.cbtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border-radius:4px;padding:5px 12px;font-size:13px;color:#4b5765;
+  border:1px solid transparent}
+.cbtn.sq{padding:5px 7px;color:#8b97a5}
+.cbtn.on{font-weight:700;color:#1f5fbd;box-shadow:inset 0 -2px 0 #3080f0;
+  border-radius:4px 4px 0 0}
+.ctb-title{font-size:14.5px;font-weight:700;letter-spacing:-.01em;color:#26313d}
+.ctb-modes{margin-left:auto;display:inline-flex;gap:2px;align-items:center}
+.cal{background:#fff;color:#26313d;
+  font:12.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.cal-head,.cal-row{display:grid;grid-template-columns:54px repeat(7,minmax(0,1fr))}
+.cal-head{background:#fafbfc;border-bottom:1px solid #dfe4ea}
+.cal-head>div+div{border-left:1px solid #eef1f5}
+.cal-hc{padding:7px 3px}
+.cal-day-header{display:flex;align-items:baseline;justify-content:center;gap:4px}
+.cal-dow{color:#26313d;font-weight:400}
+.cal-dom{min-width:18px;text-align:center;color:#26313d;font-weight:600;
+  font-variant-numeric:tabular-nums}
+.cal-hc.today .cal-dow,.cal-hc.today .cal-dom{color:#9f7322}
+.cal-row{min-height:92px}
+.cal-row+.cal-row .cal-time,.cal-row+.cal-row .cal-c{border-top:1px solid #eef1f5}
+.cal-time{font-size:11px;color:#8b97a5;text-align:right;padding:5px 8px 0 0;
+  font-variant-numeric:tabular-nums}
+.cal-c{border-left:1px solid #eef1f5;padding:4px;min-width:0;overflow:hidden}
+.cal-c.today{background:#fcf8e3}
+.cal-ev{border-radius:3px;color:#fff;padding:4px 6px;
+  border:1px solid rgba(0,0,0,.10);box-shadow:0 1px 2px rgba(20,30,45,.12)}
+.cal-ev-time{font-size:11.5px;opacity:.95}
+.cal-ev-title{font-weight:600;line-height:1.35}
+.cal-ev .ui-num{background:#fff;color:#1f5fbd;box-shadow:0 0 0 1px rgba(0,0,0,.16);
+  vertical-align:0}
+.cal-chip{display:inline-flex;align-items:center;gap:3px;max-width:100%;
+  border:1px solid currentColor;border-radius:3px;padding:0 4px;font-size:10px;
+  line-height:1.7;margin:3px 4px 0 0;overflow:hidden}
+.cal-chip svg{flex:none}
+.cal-chip-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-ev-user{display:flex;align-items:center;gap:5px;font-size:11px;margin-top:4px;
+  overflow:hidden;white-space:nowrap}
+.cal-ev-user .av{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.88);
+  color:#4b5765;font-size:8.5px;font-weight:700;display:inline-flex;align-items:center;
+  justify-content:center;flex:none}
 @media(max-width:760px){
   .ui-body.two{flex-direction:column}
   .ui-side{flex:1 1 auto;width:100%}
@@ -360,6 +406,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
     <li><a href="#e">10. Dates &amp; times</a></li>
     <li><a href="#f">11. Meetings</a></li>
     <li><a href="#lead-owner">12. New leads start with you</a></li>
+    <li><a href="#calendar-week">13. Calendar week view</a></li>
     <li><a href="#status">Quality &amp; safety</a></li>
   </ol>
 </nav>
@@ -367,12 +414,12 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <main>
 <header class="doc">
   <h1>EspoCRM Feature Guide</h1>
-  <p class="sub">Twelve improvements made to this EspoCRM instance, explained in plain
+  <p class="sub">Thirteen improvements made to this EspoCRM instance, explained in plain
   language with a picture of each screen.</p>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
-    <span>12 features</span>
-    <span>Updated 4 October 2026</span>
+    <span>13 features</span>
+    <span>Updated 5 October 2026</span>
   </div>
 </header>
 
@@ -397,6 +444,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <tr><td class="num">10</td><td><a href="#e">Local date and time format</a></td><td>While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.</td></tr>
 <tr><td class="num">11</td><td><a href="#f">Meetings start faster</a></td><td>The meeting name fills itself in and you are already on the invite.</td></tr>
 <tr><td class="num">12</td><td><a href="#lead-owner">New leads start with you</a></td><td>A brand-new lead already has you set as its Assigned User, so one less field has to be filled in.</td></tr>
+<tr><td class="num">13</td><td><a href="#calendar-week">Week view matches the month</a></td><td>Today is marked, every day is headed by a weekday and a date, and each entry is a card showing its time and status.</td></tr>
     </tbody>
   </table>
   </div>
@@ -1338,6 +1386,191 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   </ul>
 </section>
 
+<!-- ==================================================================== 13 -->
+<section id="calendar-week">
+  <h2><span class="tag">13</span>The calendar week reads like the month</h2>
+  <p class="lede">The <b>Week</b> view is where the day is actually spent, and it did not
+  look like the rest of the calendar: today was not marked in any way, each day was headed
+  by a single line of <b>Mon 05</b>, and an entry showed nothing but its time and its title.
+  Week now follows the <b>Month</b> view&rsquo;s language, so the two screens read the same.</p>
+
+  <figure class="shot"><figcaption class="shot-cap">The calendar, week view</figcaption>
+<div class="ui cal-ui">
+  
+  <div class="ui-top">
+    <span class="ui-logo">EspoCRM</span>
+    <span class="ui-spacer"></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35"/></svg></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span class="ui-ic bell"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+    <span class="ui-ic av">A</span>
+  </div>
+  
+  <div class="ui-ctb">
+    <span class="cgrp">
+      <span class="cbtn sq"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></span>
+      <span class="cbtn sq"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+      <span class="cbtn">Today</span>
+    </span>
+    <span class="ctb-title">4 Oct 2026 &ndash; 10 Oct 2026 <sup class="ui-num">1</sup></span>
+    <span class="ctb-modes">
+      <span class="cbtn">Month</span>
+      <span class="cbtn on">Week <sup class="ui-num">3</sup></span>
+      <span class="cbtn">Timeline</span>
+      <span class="cbtn sq">&hellip;</span>
+    </span>
+  </div>
+  <div class="cal">
+    <div class="cal-head">
+      <div class="cal-gut"></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Sun</span><span class="cal-dom">4</span></div></div>
+      <div class="cal-hc today"><div class="cal-day-header"><span class="cal-dow">Mon</span><span class="cal-dom">5</span></div></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Tue</span><span class="cal-dom">6</span></div></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Wed</span><span class="cal-dom">7</span></div></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Thu</span><span class="cal-dom">8</span></div></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Fri</span><span class="cal-dom">9</span></div></div>
+      <div class="cal-hc"><div class="cal-day-header"><span class="cal-dow">Sat</span><span class="cal-dom">10</span></div></div>
+    </div>
+    <div class="cal-body">
+      <div class="cal-row">
+        <div class="cal-time">9:00AM</div>
+        <div class="cal-c"></div>
+        <div class="cal-c today">
+          <div class="cal-ev" style="background:#cf605d">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">9:00 AM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">Mohsin Eli <sup class="ui-num">5</sup></div>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c">
+          <div class="cal-ev" style="background:#70c173">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">9:00 AM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">Send quotation</div><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span class="cal-chip-text">Tasks</span></span><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span class="cal-chip-text">Completed</span></span>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+      </div>
+      <div class="cal-row">
+        <div class="cal-time">10:00AM</div>
+        <div class="cal-c"></div>
+        <div class="cal-c today">
+          <div class="cal-ev" style="background:#558bbd">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">10:00 AM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">Delta Trading Co. <sup class="ui-num">4</sup></div><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></svg><span class="cal-chip-text">Meetings</span></span><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg><span class="cal-chip-text">Planned</span></span><div class="cal-ev-user"><span class="av">A</span><span>Admin</span></div>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c">
+          <div class="cal-ev" style="background:#558bbd">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">10:00 AM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">Product demo</div><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></svg><span class="cal-chip-text">Meetings</span></span><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg><span class="cal-chip-text">Planned</span></span>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+      </div>
+      <div class="cal-row">
+        <div class="cal-time">11:00AM</div>
+        <div class="cal-c"></div>
+        <div class="cal-c today"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c">
+          <div class="cal-ev" style="background:#cf605d">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">11:00 AM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">TestX</div>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+      </div>
+      <div class="cal-row">
+        <div class="cal-time">12:00PM</div>
+        <div class="cal-c"></div>
+        <div class="cal-c today">
+          <div class="cal-ev" style="background:#cf605d">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">12:00 PM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">MIH Jihad</div>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+      </div>
+      <div class="cal-row">
+        <div class="cal-time">1:00PM</div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c">
+          <div class="cal-ev" style="background:#558bbd">
+            <div class="cal-ev-frame">
+              <div class="cal-ev-time">1:00 PM</div>
+              <div class="cal-ev-titles">
+                <div class="cal-ev-title">Site visit</div><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></svg><span class="cal-chip-text">Meetings</span></span><span class="cal-chip"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"/></svg><span class="cal-chip-text">Planned</span></span>
+              </div>
+            </div>
+          </div></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+        <div class="cal-c"></div>
+      </div>
+    </div>
+  </div>
+</div><div class="ui-annot"><span><b>1</b> The range you are looking at, with both ends named</span><span><b>2</b> Today &mdash; its column is tinted and its heading turns amber</span><span><b>3</b> The mode you are in stays underlined</span><span><b>4</b> An entry long enough to read carries its type, its status and the people on it</span><span><b>5</b> A short entry keeps to its time and its title</span></div></figure>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:44%">Where</th><th>What you see now</th></tr></thead>
+    <tbody>
+      <tr><td>The day headings, in Week and Day</td><td>the weekday over the date &mdash; <b>Mon</b> in ordinary weight, <b>5</b> in bold, centred on the column</td></tr>
+      <tr><td>Today, in Week and Day</td><td>the column carries the same pale tint as today&rsquo;s cell in Month, and its heading is amber</td></tr>
+      <tr><td>An entry of 45 minutes or more</td><td>time, title, then a chip for the record type and a chip for its status &mdash; a tick when it is finished</td></tr>
+      <tr><td>An entry shorter than 45 minutes</td><td>time and title only, exactly as before</td></tr>
+      <tr><td>An all-day entry</td><td>the type and status chips are always shown</td></tr>
+      <tr><td>People on the entry</td><td>still listed under the title, with their avatar</td></tr>
+      <tr><td>The title at the top</td><td>the range itself &mdash; <b>4 Oct 2026 &ndash; 10 Oct 2026</b> &mdash; instead of the month name</td></tr>
+      <tr><td>Hour marks and entry times</td><td>tabular figures, so they line up down the gutter</td></tr>
+      <tr><td>Under 560px wide</td><td>the weekday and the date stack instead of running out of room</td></tr>
+      <tr><td>Month and Timeline</td><td>not part of this change &mdash; no weekday-and-date headings, no chips</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">Today is unmistakable at a glance, in both Week and Day.</li>
+    <li class="yes">The two chips answer &ldquo;what is this and where is it up to&rdquo; without opening the record.</li>
+    <li class="yes">Times are aligned down the gutter and across the entries, so a busy day is easy to scan.</li>
+    <li class="yes">Only the rendering changed &mdash; the same events, colours, filters, drag-and-drop, week navigation and refresh are all exactly as they were.</li>
+    <li class="yes">It is four small files in the project&rsquo;s own folders; the EspoCRM program itself is untouched.</li>
+    <li class="no">Entries under 45 minutes stay plain on purpose &mdash; two chips on a one-line bar would crowd it out.</li>
+    <li class="no">Month keeps its own headings; the type and status chips are a Week and Day feature.</li>
+  </ul>
+</section>
+
 <!-- ==================================================================== 7 -->
 <section id="status">
   <h2>Quality &amp; safety</h2>
@@ -1349,7 +1582,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 </section>
 
 <footer>
-  EspoCRM Feature Guide &middot; version 1.3 &middot; updated 4 October 2026
+  EspoCRM Feature Guide &middot; version 1.4 &middot; updated 5 October 2026
 </footer>
 </main>
 </div>

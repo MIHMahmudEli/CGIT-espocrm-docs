@@ -20,15 +20,15 @@ const missing = [...new Set(hrefs.filter((a) => !ids.includes(a)))];
 missing.length === 0 ? ok(`anchors resolve (${new Set(hrefs).size} unique)`)
     : fail('broken anchors: ' + missing.join(','));
 
-/* 4. twelve numbered sections in order */
+/* 4. thirteen numbered sections in order */
 const tags = [...h.matchAll(/<span class="tag">(\d+)<\/span>/g)].map((m) => +m[1]);
-const want = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-JSON.stringify(tags) === JSON.stringify(want) ? ok('section tags 1..12 in order')
+const want = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+JSON.stringify(tags) === JSON.stringify(want) ? ok('section tags 1..13 in order')
     : fail('section tags: ' + JSON.stringify(tags));
 
 /* 5. figure count and captions present */
 const figs = (h.match(/<figure class="shot">/g) || []).length;
-figs === 20 ? ok('20 figures') : fail(`figures=${figs}, expected 20`);
+figs === 21 ? ok('21 figures') : fail(`figures=${figs}, expected 21`);
 
 /* 6. currency entity, no BDT+digits in the body */
 const ent = (h.match(/&#2547;/g) || []).length;
@@ -38,18 +38,20 @@ bdt === 0 ? ok('no BDT+digits') : fail(`BDT+digits x${bdt}`);
 
 /* 7. feature counts in prose */
 const checks = [
-    ['Twelve improvements', /Twelve improvements/],
-    ['12 features pill', /<span>12 features<\/span>/],
+    ['Thirteen improvements', /Thirteen improvements/],
+    ['13 features pill', /<span>13 features<\/span>/],
     ['nav has 11. Meetings', />11\. Meetings</],
     ['nav has 12. New leads', />12\. New leads/],
+    ['nav has 13. Calendar week view', />13\. Calendar week view</],
+    ['week title range', /4 Oct 2026 &ndash; 10 Oct 2026/],
 ];
 for (const [label, re] of checks) re.test(h) ? ok(label) : fail(label);
 
 const rows = (h.match(/<td class="num">/g) || []).length;
-rows === 12 ? ok('feature table has 12 rows') : fail(`feature table rows=${rows}, expected 12`);
+rows === 13 ? ok('feature table has 13 rows') : fail(`feature table rows=${rows}, expected 13`);
 
 /* 8. labels now present */
-for (const s of ['Call Date', 'Call Time', 'Product Services', 'Assigned User']) {
+for (const s of ['Call Date', 'Call Time', 'Product Services', 'Assigned User', 'Timeline', 'Meetings']) {
     h.includes(s) ? ok(`string present: ${s}`) : fail(`string missing: ${s}`);
 }
 
