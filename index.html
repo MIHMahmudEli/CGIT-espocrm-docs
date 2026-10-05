@@ -359,6 +359,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
     <li><a href="#d">9. Duplicate calls</a></li>
     <li><a href="#e">10. Dates &amp; times</a></li>
     <li><a href="#f">11. Meetings</a></li>
+    <li><a href="#lead-owner">12. New leads start with you</a></li>
     <li><a href="#status">Quality &amp; safety</a></li>
   </ol>
 </nav>
@@ -366,12 +367,12 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <main>
 <header class="doc">
   <h1>EspoCRM Feature Guide</h1>
-  <p class="sub">Eleven improvements made to this EspoCRM instance, explained in plain
+  <p class="sub">Twelve improvements made to this EspoCRM instance, explained in plain
   language with a picture of each screen.</p>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
-    <span>11 features</span>
-    <span>Updated 2 October 2026</span>
+    <span>12 features</span>
+    <span>Updated 4 October 2026</span>
   </div>
 </header>
 
@@ -395,13 +396,14 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <tr><td class="num">9</td><td><a href="#d">Duplicate, then describe</a></td><td>Duplicating a call copies everything except the description, which arrives empty &mdash; you must fill it in before the call can be saved.</td></tr>
 <tr><td class="num">10</td><td><a href="#e">Local date and time format</a></td><td>While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.</td></tr>
 <tr><td class="num">11</td><td><a href="#f">Meetings start faster</a></td><td>The meeting name fills itself in and you are already on the invite.</td></tr>
+<tr><td class="num">12</td><td><a href="#lead-owner">New leads start with you</a></td><td>A brand-new lead already has you set as its Assigned User, so one less field has to be filled in.</td></tr>
     </tbody>
   </table>
   </div>
-  <div class="note plain"><b>About the pictures.</b> Each feature below is illustrated
-  with a rendering of the real EspoCRM screen &mdash; the same fields, buttons and wording
-  you see in the application. Small numbered dots on a picture are explained in the line
-  directly beneath it.</div>
+  <div class="note plain"><b>About the pictures.</b> Each feature below that changes a
+  screen is illustrated with a rendering of the real EspoCRM screen &mdash; the same
+  fields, buttons and wording you see in the application. Small numbered dots on a
+  picture are explained in the line directly beneath it.</div>
 </section>
 
 <!-- ==================================================================== 1 -->
@@ -1223,6 +1225,119 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   </ul>
 </section>
 
+<!-- ==================================================================== 12 -->
+<section id="lead-owner">
+  <h2><span class="tag">12</span>A new lead starts with you as its owner</h2>
+  <p class="lede">Opening a brand-new lead used to leave <b>Assigned User</b> empty, so a
+  new lead arrived with nobody on it and it was easy to forget who was meant to look after
+  it. It now arrives already set to <b>you</b> &mdash; whoever happens to be signed in.</p>
+
+  <figure class="shot"><figcaption class="shot-cap">A new lead, with its owner already set</figcaption>
+<div class="ui">
+  
+  <div class="ui-top">
+    <span class="ui-logo">EspoCRM</span>
+    <span class="ui-spacer"></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35"/></svg></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span class="ui-ic bell"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+    <span class="ui-ic av">A</span>
+  </div>
+  <div class="ui-crumbs">Leads &nbsp;&rsaquo;&nbsp; New Lead</div>
+  <div class="ui-body two">
+    <div class="ui-main">
+      <div class="ui-card">
+        <div class="ui-card-h">Overview <span class="ui-actions"><span class="ui-btn">Cancel</span><span class="ui-btn pri"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Save</span></span></div>
+        <div class="ui-card-b">
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Name</span>
+              <div class="ui-in">Mohsin Eli</div></div>
+            <div class="ui-field"><span class="ui-lab">Account Name</span>
+              <div class="ui-in mute">Enter account name&hellip;</div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Email</span>
+              <div class="ui-in mute">Enter email address&hellip;</div></div>
+            <div class="ui-field"><span class="ui-lab">Phone</span>
+              <div class="ui-in mute">Enter phone number&hellip;</div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Product Services </span>
+              <div class="ui-in filled"><span class="ui-chip">X <span class="x">&times;</span></span>
+              <span class="ui-mag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35"/></svg></span></div></div>
+            <div class="ui-field"><span class="ui-lab">Website</span>
+              <div class="ui-in mute">https://&hellip;</div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field wide"><span class="ui-lab">Address</span>
+              <div class="ui-in mute">Enter address&hellip;</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ui-card" style="margin-top:14px">
+        <div class="ui-card-h">Details</div>
+        <div class="ui-card-b">
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Status</span>
+              <div class="ui-in">New <span class="ui-mag">&#9662;</span></div></div>
+            <div class="ui-field"><span class="ui-lab">Source</span>
+              <div class="ui-in mute">Select&hellip; <span class="ui-mag">&#9662;</span></div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Opportunity Amount </span>
+              <div class="ui-cur"><span class="in flash">20,000.00</span><span class="ad">BDT</span></div>
+              </div>
+            <div class="ui-field"><span class="ui-lab">Campaign</span>
+              <div class="ui-in mute">Select&hellip; <span class="ui-mag">&#9662;</span></div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field"><span class="ui-lab">Industry</span>
+              <div class="ui-in mute">Select&hellip; <span class="ui-mag">&#9662;</span></div></div>
+          </div>
+          <div class="ui-row">
+            <div class="ui-field wide"><span class="ui-lab">Description</span>
+              <div class="ui-in tall mute">Add notes about this lead&hellip;</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui-side">
+      <div class="ui-card">
+        <div class="ui-card-b">
+          <span class="ui-lab">Assigned User <sup class="ui-num">1</sup></span>
+          <div class="ui-in filled">Admin (You) <span class="ui-mag">&#9662;</span></div>
+          <div style="margin-top:14px"><span class="ui-lab">Teams <sup class="ui-num">2</sup></span>
+            <div class="ui-in mute">Add team&hellip;</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><div class="ui-annot"><span><b>1</b> Assigned User already holds the person creating the lead</span><span><b>2</b> Teams is left empty &mdash; it is yours to fill in only if you want to</span></div></figure>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:44%">What you do</th><th>Who the lead belongs to</th></tr></thead>
+    <tbody>
+      <tr><td>create a lead</td><td>you &mdash; set before the form even opens</td></tr>
+      <tr><td>open a lead that already exists</td><td>unchanged &mdash; only new leads are affected</td></tr>
+      <tr><td>pick somebody else, then save</td><td>the person you picked &mdash; the starting value is only a suggestion</td></tr>
+      <tr><td>leave it alone and press Save</td><td>you</td></tr>
+      <tr><td>sign in as somebody else and create a lead</td><td>that person &mdash; it is always whoever is signed in</td></tr>
+      <tr><td>use the smaller pop-up form instead</td><td>you &mdash; it behaves exactly the same way</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">One less field to fill in on every lead you create.</li>
+    <li class="yes">It is only a starting point &mdash; nothing is saved until you press Save.</li>
+    <li class="yes">The lead goes on showing you as its owner until somebody changes it.</li>
+    <li class="no">Leads brought in by import, by another integration or by a workflow are not touched.</li>
+    <li class="no">Existing leads are never re-assigned &mdash; the rule applies only while a lead is being created.</li>
+  </ul>
+</section>
+
 <!-- ==================================================================== 7 -->
 <section id="status">
   <h2>Quality &amp; safety</h2>
@@ -1234,7 +1349,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 </section>
 
 <footer>
-  EspoCRM Feature Guide &middot; version 1.2 &middot; updated 2 October 2026
+  EspoCRM Feature Guide &middot; version 1.3 &middot; updated 4 October 2026
 </footer>
 </main>
 </div>

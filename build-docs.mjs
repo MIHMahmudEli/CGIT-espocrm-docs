@@ -576,7 +576,10 @@ const G6 = `
 
 /* ================================== lead form: amount filled from the price */
 
-const leadForm = (chips, amount) => `
+const leadForm = (chips, amount, side, mk) => {
+    const mark = mk || num;
+
+    return `
 <div class="ui">
   ${bar('Leads &nbsp;&rsaquo;&nbsp; New Lead')}
   <div class="ui-body two">
@@ -597,7 +600,7 @@ const leadForm = (chips, amount) => `
               <div class="ui-in mute">Enter phone number&hellip;</div></div>
           </div>
           <div class="ui-row">
-            <div class="ui-field"><span class="ui-lab">Product Services ${num(1)}</span>
+            <div class="ui-field"><span class="ui-lab">Product Services ${mark(1)}</span>
               <div class="ui-in filled">${chips}
               <span class="ui-mag">${ic('search', 13)}</span></div></div>
             <div class="ui-field"><span class="ui-lab">Website</span>
@@ -619,9 +622,9 @@ const leadForm = (chips, amount) => `
               <div class="ui-in mute">Select&hellip; <span class="ui-mag">&#9662;</span></div></div>
           </div>
           <div class="ui-row">
-            <div class="ui-field"><span class="ui-lab">Opportunity Amount ${num(2)}</span>
+            <div class="ui-field"><span class="ui-lab">Opportunity Amount ${mark(2)}</span>
               <div class="ui-cur"><span class="in flash">${amount}</span><span class="ad">BDT</span></div>
-              <div style="margin-top:7px"><span class="ui-badge">auto-filled ${num(3)}</span></div></div>
+              ${mark(3) ? `<div style="margin-top:7px"><span class="ui-badge">auto-filled ${mark(3)}</span></div>` : ''}</div>
             <div class="ui-field"><span class="ui-lab">Campaign</span>
               <div class="ui-in mute">Select&hellip; <span class="ui-mag">&#9662;</span></div></div>
           </div>
@@ -636,8 +639,9 @@ const leadForm = (chips, amount) => `
         </div>
       </div>
     </div>
-  </div>
+${side || ''}  </div>
 </div>`;
+};
 
 /* H1 — one product chosen */
 const H1 = leadForm('<span class="ui-chip">X <span class="x">&times;</span></span>', '20,000.00');
@@ -647,6 +651,24 @@ const H2 = leadForm(
     '<span class="ui-chip">X <span class="x">&times;</span></span>' +
     '<span class="ui-chip">Y <span class="x">&times;</span></span>',
     '50,000.00');
+
+/* M1 — the right-hand column of a new lead, owner already set */
+const M1 = leadForm(
+    '<span class="ui-chip">X <span class="x">&times;</span></span>',
+    '20,000.00',
+    `
+    <div class="ui-side">
+      <div class="ui-card">
+        <div class="ui-card-b">
+          <span class="ui-lab">Assigned User ${num(1)}</span>
+          <div class="ui-in filled">Admin (You) <span class="ui-mag">&#9662;</span></div>
+          <div style="margin-top:14px"><span class="ui-lab">Teams ${num(2)}</span>
+            <div class="ui-in mute">Add team&hellip;</div></div>
+        </div>
+      </div>
+    </div>
+`,
+    () => '');
 
 /* ================================================ calls: the product shown */
 
@@ -784,6 +806,7 @@ const L2 = callRecord({
 
 /* =============================================================== appendix */
 const fileTree = `
+.htaccess
 custom/Docs/WebPush.md
 custom/Espo/Custom/ConsoleCommands/WebPushGenerateVapidKeys.php
 custom/Espo/Custom/Controllers/CProductService.php
@@ -812,6 +835,7 @@ public/sw.js
 client/custom/src/web-push.js
 client/custom/src/helpers/web-push-manager.js
 client/custom/src/handlers/create-task-prefill.js
+client/custom/src/handlers/lead/defaults-preparator.js
 client/custom/src/views/site/navbar/web-push.js
 client/custom/src/views/modals/select-product-service.js
 client/custom/src/views/call/record/&#123;detail,edit,edit-small&#125;.js
@@ -826,8 +850,10 @@ client/custom/res/templates/stream/notes/create-call.tpl
 `;
 
 const TESTS = [
-    ['webpush-infra-test.php', 'Web Push end-to-end', '160'],
-    ['webpush-frontend-check.mjs', 'Web Push front end', '48'],
+    ['webpush-infra-test.php', 'Web Push end-to-end', '186'],
+    ['webpush-frontend-check.mjs', 'Web Push front end', '75'],
+    ['sw-runtime-check.mjs', 'Web Push worker, run in isolation', '33'],
+    ['check-all.mjs', 'Runs the four Web Push suites above at once', '-'],
     ['wp-meta-check.php', 'Web Push metadata', '10'],
     ['ps-autofill-check.mjs', 'Call product-service picker', '151'],
     ['meeting-autofill-check.mjs', 'Meeting autofill', '81'],
@@ -861,6 +887,7 @@ const features = [
     ['9', 'Duplicate, then describe', 'Duplicating a call copies everything except the description, which arrives empty &mdash; you must fill it in before the call can be saved.', '#d'],
     ['10', 'Local date and time format', 'While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.', '#e'],
     ['11', 'Meetings start faster', 'The meeting name fills itself in and you are already on the invite.', '#f'],
+    ['12', 'New leads start with you', 'A brand-new lead already has you set as its Assigned User, so one less field has to be filled in.', '#lead-owner'],
 ];
 
 const featureRows = features
@@ -1232,6 +1259,7 @@ const html = `<!DOCTYPE html>
     <li><a href="#d">9. Duplicate calls</a></li>
     <li><a href="#e">10. Dates &amp; times</a></li>
     <li><a href="#f">11. Meetings</a></li>
+    <li><a href="#lead-owner">12. New leads start with you</a></li>
     <li><a href="#status">Quality &amp; safety</a></li>
   </ol>
 </nav>
@@ -1239,12 +1267,12 @@ const html = `<!DOCTYPE html>
 <main>
 <header class="doc">
   <h1>EspoCRM Feature Guide</h1>
-  <p class="sub">Eleven improvements made to this EspoCRM instance, explained in plain
+  <p class="sub">Twelve improvements made to this EspoCRM instance, explained in plain
   language with a picture of each screen.</p>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
-    <span>11 features</span>
-    <span>Updated 2 October 2026</span>
+    <span>12 features</span>
+    <span>Updated 4 October 2026</span>
   </div>
 </header>
 
@@ -1261,10 +1289,10 @@ ${featureRows}
     </tbody>
   </table>
   </div>
-  <div class="note plain"><b>About the pictures.</b> Each feature below is illustrated
-  with a rendering of the real EspoCRM screen &mdash; the same fields, buttons and wording
-  you see in the application. Small numbered dots on a picture are explained in the line
-  directly beneath it.</div>
+  <div class="note plain"><b>About the pictures.</b> Each feature below that changes a
+  screen is illustrated with a rendering of the real EspoCRM screen &mdash; the same
+  fields, buttons and wording you see in the application. Small numbered dots on a
+  picture are explained in the line directly beneath it.</div>
 </section>
 
 <!-- ==================================================================== 1 -->
@@ -1604,6 +1632,40 @@ ${featureRows}
   </ul>
 </section>
 
+<!-- ==================================================================== 12 -->
+<section id="lead-owner">
+  <h2><span class="tag">12</span>A new lead starts with you as its owner</h2>
+  <p class="lede">Opening a brand-new lead used to leave <b>Assigned User</b> empty, so a
+  new lead arrived with nobody on it and it was easy to forget who was meant to look after
+  it. It now arrives already set to <b>you</b> &mdash; whoever happens to be signed in.</p>
+
+  ${shot('A new lead, with its owner already set', M1,
+      li(1, 'Assigned User already holds the person creating the lead') +
+      li(2, 'Teams is left empty &mdash; it is yours to fill in only if you want to'))}
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:44%">What you do</th><th>Who the lead belongs to</th></tr></thead>
+    <tbody>
+      <tr><td>create a lead</td><td>you &mdash; set before the form even opens</td></tr>
+      <tr><td>open a lead that already exists</td><td>unchanged &mdash; only new leads are affected</td></tr>
+      <tr><td>pick somebody else, then save</td><td>the person you picked &mdash; the starting value is only a suggestion</td></tr>
+      <tr><td>leave it alone and press Save</td><td>you</td></tr>
+      <tr><td>sign in as somebody else and create a lead</td><td>that person &mdash; it is always whoever is signed in</td></tr>
+      <tr><td>use the smaller pop-up form instead</td><td>you &mdash; it behaves exactly the same way</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">One less field to fill in on every lead you create.</li>
+    <li class="yes">It is only a starting point &mdash; nothing is saved until you press Save.</li>
+    <li class="yes">The lead goes on showing you as its owner until somebody changes it.</li>
+    <li class="no">Leads brought in by import, by another integration or by a workflow are not touched.</li>
+    <li class="no">Existing leads are never re-assigned &mdash; the rule applies only while a lead is being created.</li>
+  </ul>
+</section>
+
 <!-- ==================================================================== 7 -->
 <section id="status">
   <h2>Quality &amp; safety</h2>
@@ -1615,7 +1677,7 @@ ${featureRows}
 </section>
 
 <footer>
-  EspoCRM Feature Guide &middot; version 1.2 &middot; updated 2 October 2026
+  EspoCRM Feature Guide &middot; version 1.3 &middot; updated 4 October 2026
 </footer>
 </main>
 </div>
