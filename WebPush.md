@@ -14,7 +14,7 @@ Two independent delivery paths share one API:
 | **A — in-app** | `NotificationService::notifyUser()` writes a `notification` row and submits a WebSocket refresh | No — visible only while a session is open |
 | **B — Web Push** | The same call forwards the payload to the push service (FCM/Mozilla), which hands it to the operating system | Yes — while the service worker is registered for that browser profile |
 
-`CallRouteReminders` and any future producer call **one** method,
+`CallRouteReminders`, `MeetingReminders` and any future producer call **one** method,
 `NotificationService::notifyUser(...)`. There is no Web Push logic inside the
 jobs, and no `setTimeout`/`setInterval`/polling anywhere in the delivery chain.
 
@@ -28,7 +28,7 @@ Nothing in this module is Windows-specific.
 custom/Espo/Custom/
   Controllers/PushSubscription.php      REST endpoints (see §6)
   ConsoleCommands/WebPushGenerateVapidKeys.php
-  Jobs/CallRouteReminders.php           producer, consumes NotificationService
+  Jobs/{CallRouteReminders,MeetingReminders}.php   producers, consume NotificationService
   Notification/NotificationService.php  the single API both paths go through
   WebPush/
     PushNotificationService.php         dispatch: subscriptions -> PushSender
@@ -43,7 +43,7 @@ custom/Espo/Custom/
     entityDefs/Preferences.json         webPushMutedCategories
     app/client.json                     scriptList
     app/clientNavbar.json               navbar toggle
-    app/scheduledJobs.json              CallRouteReminders every minute
+    app/scheduledJobs.json              call + meeting reminders every minute
     app/consoleCommands.json            web-push-generate-vapid-keys
     scopes/PushSubscription.json
 
@@ -52,6 +52,7 @@ client/custom/
   src/helpers/web-push-manager.js       SW + permission + API calls
   src/views/site/navbar/web-push.js     navbar control
   res/templates/site/navbar/web-push.tpl
+  img/cgit-logo-192.png                 toast icon (192x192, drawn by the OS)
 .htaccess                               never lets a browser cache sw.js
 public/sw.js                            service worker (root scope)
 data/webpush-config.php                 VAPID fallback, private key — never public
@@ -77,6 +78,13 @@ server-owned items (HTTPS and cron) is automatic.
    is *allowed* to cache on its own schedule; if a server gives it a long
    lifetime, devices that already have it registered keep the old copy for days
    and never see a fix you deploy.
+
+   Deploy `client/custom/img/cgit-logo-192.png` (192x192, square) alongside it.
+   `public/sw.js` points at that path for the toast icon; if the file is not
+   reachable the notification still arrives, but the operating system draws a
+   generic placeholder instead of your logo. Replacing the logo means giving it
+   a new file name as well — Windows caches an icon against its URL — and
+   bumping `SW_VERSION` so every device picks up the new worker.
 3. **VAPID key pair.** Normally nothing to do: the first request generates a
    pair and writes `data/webpush-config.php`, so a fresh deployment starts
    working by itself. Two reasons to run it by hand instead — choosing the
@@ -107,8 +115,8 @@ server-owned items (HTTPS and cron) is automatic.
    php rebuild.php
    php clear_cache.php
    ```
-6. **Confirm the scheduler runs every minute.** `CallRouteReminders` is
-   registered with `* * * * *`. The cron entry EspoCRM already uses is enough:
+6. **Confirm the scheduler runs every minute.** `CallRouteReminders` and
+   `MeetingReminders` are registered with `* * * * *`. The cron entry EspoCRM already uses is enough:
 
    ```
    * * * * * php /path/to/espocrm/cron.php > /dev/null 2>&1
@@ -132,6 +140,19 @@ server-owned items (HTTPS and cron) is automatic.
   HTTP) does **not**.
 * Clearing site data removes the service worker registration; re-enable the
   toggle after clearing.
+* **Check the toast icon.** The worker draws it from
+  `client/custom/img/cgit-logo-192.png` (192x192, square). Reload the CRM once —
+  that is what picks up the worker version in `public/sw.js` — then send yourself
+  a test push, and the banner should show the CGIT mark instead of the EspoCRM
+  logo. If it does not, check three things in this order:
+
+  1. `http://localhost/<base>/client/custom/img/cgit-logo-192.png` answers `200`
+     with `Content-Type: image/png`.
+  2. `http://localhost/<base>/sw.js` contains that same path — a worker cached
+     from before the change still draws the old icon, and only a page reload
+     replaces it.
+  3. `SW_VERSION` in `public/sw.js` is newer than the version reported by
+     `POST diagnostics`, otherwise the device is still running yesterday's worker.
 * To watch the wire without a real push service, point the sender at a local
   endpoint during development — the integration suite does exactly this with a
   `php -S` router that returns `201`, `410` and `429` so success, expired
@@ -144,6 +165,7 @@ server-owned items (HTTPS and cron) is automatic.
 | Browser | Status |
 |---------|--------|
 | Chrome / Edge (Windows, macOS, Linux) | Supported — verified |
+| Brave, Vivaldi and other Chromium forks | Works only after *"Use Google services for push messaging"* is switched on — see §10 |
 | Firefox (Windows, macOS, Linux) | Supported by spec; uses Mozilla's push service |
 | Safari 16.4+ (macOS, iOS) | Supported by spec; requires an Apple developer certificate on iOS |
 | Internet Explorer, legacy Edge | Not supported (no Service Worker / Push API) |
@@ -327,7 +349,36 @@ so a transient outage cannot destroy a working subscription.
 | One device ignored a fix deployed to the server | The browser still holds the previous `sw.js` — confirm `<base>/sw.js` answers `Cache-Control: no-cache`, then reload the CRM on that device |
 | Duplicates return after a scheduler change | `actionId` changed; old rows keep their key, new rows get a new one |
 | Permission prompt never appears | Only the navbar toggle requests it; check the browser's site permissions |
+| Notification arrives with a blank or generic icon | `client/custom/img/cgit-logo-192.png` is missing or blocked — confirm `<base>/client/custom/img/cgit-logo-192.png` answers `200` |
+| Bell says "Notifications were not enabled" and the console shows `AbortError: Registration failed - push service error` | Brave/Vivaldi push setting is off — the walkthrough below |
 | Push works, in-app panel does not | WebSocket submission path, unrelated to this module |
+
+### `AbortError: Registration failed - push service error` on Brave
+
+Brave ships with **Use Google services for push messaging** turned off. Chromium's
+Push API reaches Google's FCM underneath, so with that switch off
+`pushManager.subscribe()` rejects immediately with:
+
+```
+AbortError: Registration failed - push service error
+```
+
+The permission prompt and the service worker both succeed, which is why nothing
+looks obviously blocked: the manager simply ends up with `subscribed: false` and the
+bell falls back to *"Notifications were not enabled"*. Chrome works because the
+setting is already on there.
+
+Fix on that device:
+
+1. Open `brave://settings/privacy`.
+2. Turn on **Use Google services for push messaging** — first item, under *Privacy and security*.
+3. Quit Brave completely and start it again; the toggle does not take effect until a restart.
+4. Reload the CRM and click the bell again.
+
+Still failing after the restart? Check three things: the tab is not a private window
+(Brave blocks push there), Shields is not blocking `fcm.googleapis.com`, and the page
+is being served over HTTPS (`GET /api/v1/PushSubscription/action/status` must answer
+`401`, not `404`).
 
 ---
 

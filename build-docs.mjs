@@ -203,12 +203,14 @@ const callForm = (m = {}) => `
         </div>
         <div class="ui-row">
           <div class="ui-field"><span class="ui-lab">Call Date ${m.date || ''} <span class="req">*</span></span>
-            <div class="ui-in${m.dateFlash ? ' flash' : ''}">02/10/2026 <span class="ui-mag">${ic('cal', 13)}</span></div></div>
+            <div class="ui-in${m.dateFlash ? ' flash' : ''}">02/10/2026 <span class="ui-mag">${ic('cal', 13)}</span></div>
+            ${m.dateHint ? `<div class="ui-hint">${m.dateHint}</div>` : ''}</div>
           <div class="ui-field"><span class="ui-lab">Call Time ${m.time || ''} <span class="req">*</span></span>
             <div class="ui-pair">
               <div class="ui-in${m.timeFlash ? ' flash' : ''}">02/10/2026 <span class="ui-mag">${ic('cal', 13)}</span></div>
               <div class="ui-in${m.timeFlash ? ' flash' : ''}">03:57 PM <span class="ui-mag">${ic('clock', 13)}</span></div>
-            </div></div>
+            </div>
+            ${m.timeHint ? `<div class="ui-hint">${m.timeHint}</div>` : ''}</div>
         </div>
         <div class="ui-field wide"><span class="ui-lab">Description ${m.descLabel || ''}${m.descReq ? ' <span class="req">*</span>' : ''}</span>
           <div class="ui-in tall${m.descFlash ? ' flash' : ''}${m.descReq ? ' req' : ''}${m.descText ? '' : ' mute'}">${m.descText ||
@@ -824,6 +826,49 @@ const K1 = `
   </div>
 </div>`;
 
+/* K1s - the same list, with a product name typed into the search box */
+const K1s = `
+<div class="ui">
+  ${bar('Calls')}
+  <div class="ui-search">
+    <div class="ui-sgrp">
+      <span class="ui-sin">Y ${num(1)}</span>
+      <span class="ui-sbtn">${ic('search', 13)}</span>
+      <span class="ui-sbtn last">&#8942;</span>
+    </div>
+  </div>
+  <div class="ui-ltop">
+    <span class="ui-btn">Actions</span>
+    <span class="ui-spacer"></span>
+    <span class="ui-total">3 records found ${num(3)}</span>
+  </div>
+  <div class="ui-lwrap">
+    <table class="lt">
+      <thead><tr><th>Name</th><th>Parent</th><th>Product Services</th>
+        <th>Status</th><th>Date Start</th><th>Assigned User</th></tr></thead>
+      <tbody>
+        <tr><td class="lk">Mohsin Eli</td><td>Mohsin Eli</td><td>Y</td>
+            <td><span class="bdg">Planned</span></td><td>Today 04:00 PM</td><td>Admin</td></tr>
+        <tr><td class="lk">Mohsin Eli</td><td>Mohsin Eli</td><td>Y, X ${num(2)}</td>
+            <td><span class="bdg">Planned</span></td><td>Yesterday 10:34 AM</td><td>Admin</td></tr>
+        <tr><td class="lk">Mohsin Eli</td><td>Mohsin Eli</td><td>Y</td>
+            <td><span class="bdg">Planned</span></td><td>Yesterday 09:20 AM</td><td>Admin</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>`;
+
+/* MR1 — the meeting reminder toast */
+const MR1 = `
+<div class="ui desk">
+  <div class="desk-bg"></div>
+  <div class="desk-toast">
+    <span class="desk-ic">${ic('bell', 16)}</span>
+    <div class="desk-txt"><b>EspoCRM ${num(1)}</b><span>Meeting Reminder &mdash; Weekly sync ${num(2)}</span><em>Starting now &mdash; join the meeting</em></div>
+    <span class="desk-time">now</span>
+  </div>
+</div>`;
+
 /* K2 / L2 - one kind of record, two different things pointed out */
 const callRecord = (m = {}) => {
     const who = m.who || 'Mohsin Eli';
@@ -903,8 +948,10 @@ const K2 = callRecord({ durMark: num(1), ps: num(2) });
 const L1 = callForm({
     date: num(1),
     dateFlash: true,
+    dateHint: 'Today',
     time: num(2),
     timeFlash: true,
+    timeHint: 'Today 03:57 PM',
     descLabel: num(3),
     descText: 'Agreed a two-year support contract',
     descFlash: true,
@@ -927,12 +974,13 @@ const L2 = callRecord({
 const fileTree = `
 .htaccess
 custom/Docs/WebPush.md
+custom/Espo/Custom/Classes/Select/Call/TextFilter.php
 custom/Espo/Custom/ConsoleCommands/WebPushGenerateVapidKeys.php
 custom/Espo/Custom/Controllers/CProductService.php
 custom/Espo/Custom/Controllers/PushSubscription.php
 custom/Espo/Custom/Hooks/Call/DescriptionDiff.php
 custom/Espo/Custom/Hooks/Meeting/DescriptionDiff.php
-custom/Espo/Custom/Jobs/CallRouteReminders.php
+custom/Espo/Custom/Jobs/&#123;CallRouteReminders,MeetingReminders&#125;.php
 custom/Espo/Custom/Notification/NotificationService.php
 custom/Espo/Custom/Resources/routes.json
 custom/Espo/Custom/Resources/layouts/&#123;Call,CProductService,Lead&#125;/&#123;detail,detailSmall&#125;.json
@@ -944,14 +992,16 @@ custom/Espo/Custom/Resources/metadata/entityDefs/&#123;Call,CProductService,Lead
 custom/Espo/Custom/Resources/metadata/logicDefs/Call.json
 custom/Espo/Custom/Resources/metadata/recordDefs/&#123;CProductService,Lead&#125;.json
 custom/Espo/Custom/Resources/metadata/scopes/&#123;Call,CProductService,Lead,PushSubscription&#125;.json
+custom/Espo/Custom/Resources/metadata/selectDefs/Call.json
 custom/Espo/Custom/Resources/i18n/&#123;37 locales&#125;/CProductService.json
-custom/Espo/Custom/Resources/i18n/en_US/&#123;Call,Global,Lead,ScheduledJob,Task&#125;.json
+custom/Espo/Custom/Resources/i18n/en_US/&#123;Call,Global,Lead,Meeting,ScheduledJob,Task&#125;.json
 custom/Espo/Custom/Tools/Activities/&#123;Service.php,Api/Get.php,Api/GetListTyped.php&#125;
 custom/Espo/Custom/WebPush/&#123;Base64Url,Der,Encryption,ProjectPath,PushNotificationService,PushPreferences,PushSender,SendResult,SubscriptionStore,VapidKeys&#125;.php
 data/config.php
 public/sw.js
 
 client/custom/css/calendar-week.css
+client/custom/img/cgit-logo-192.png
 client/custom/src/web-push.js
 client/custom/src/helpers/web-push-manager.js
 client/custom/src/handlers/create-task-prefill.js
@@ -963,7 +1013,7 @@ client/custom/src/views/call/record/&#123;detail,edit,edit-small&#125;.js
 client/custom/src/views/meeting/record/&#123;edit,edit-small&#125;.js
 client/custom/src/views/lead/record/&#123;edit,edit-small&#125;.js
 client/custom/src/views/record/panels/history.js
-client/custom/src/views/fields/&#123;description-change,description-preview&#125;.js
+client/custom/src/views/fields/&#123;call-date,call-time,description-change,description-preview&#125;.js
 client/custom/src/views/stream/notes/create.js
 client/custom/res/templates/calendar/calendar.tpl
 client/custom/res/templates/modals/select-product-service.tpl
@@ -1011,11 +1061,330 @@ const features = [
     ['11', 'Meetings start faster', 'The meeting name fills itself in and you are already on the invite.', '#f'],
     ['12', 'New leads start with you', 'A brand-new lead already has you set as its Assigned User, so one less field has to be filled in.', '#lead-owner'],
     ['13', 'Week view matches the month', 'Today is marked, every day is headed by a weekday and a date, and each entry is a card showing its time and status.', '#calendar-week'],
+    ['14', 'Find a call by its product', 'The search box on the Calls list matches the product a call is about, not only the call name.', '#calls-search'],
+    ['15', 'Meetings remind you too', 'When a meeting&rsquo;s Date Start arrives, the assigned user is told &mdash; pop-up, notification and desktop alert, just like a call.', '#meeting-reminders'],
 ];
 
 const featureRows = features
     .map((f) => `<tr><td class="num">${f[0]}</td><td><a href="${f[3]}">${f[1]}</a></td><td>${f[2]}</td></tr>`)
     .join('\n');
+
+/* ============================================ per-feature developer notes */
+/* Closed by default: [sectionId, number, { lede, files, how, change }] */
+const DEV = [
+['catalogue', '1', {
+  lede: 'A record type built from metadata alone &mdash; EspoCRM creates the table, the menu tab, the list and the detail view from JSON, so no core file is involved.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/scopes/CProductService.json', 'turns the entity on: <code>entity: true</code>, ACL, menu tab'],
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/CProductService.json', 'fields, links and indexes &mdash; <code>category</code>, <code>type</code>, <code>status</code>, <code>price</code>'],
+    ['custom/Espo/Custom/Controllers/CProductService.php', 'API controller, extends the core record controller'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/CProductService.json', 'page icon and the Calls / Leads panels'],
+    ['custom/Espo/Custom/Resources/layouts/CProductService/list.json', 'list columns'],
+    ['custom/Espo/Custom/Resources/i18n/en_US/CProductService.json', 'labels and option names, mirrored across 37 locales'],
+  ],
+  how: [
+    'The scope carries <code>isCustom: true</code> and <code>module: "Custom"</code>, so an upgrade leaves it alone.',
+    'Leads and Calls each hold a required <code>linkMultiple</code> field <code>cProductServices</code>, through the relations <code>cLeadProductService</code> and <code>cCallProductService</code>.',
+    '<code>price</code> is a currency field and is what the Lead form sums up in feature 3.',
+  ],
+  change: [
+    'A new field needs an <code>entityDefs</code> entry <em>and</em> a cache clear, or the table column is never created.',
+    'Labels live in <code>Resources/i18n/&lt;locale&gt;/CProductService.json</code> &mdash; add the key to every locale file or the field shows its API name.',
+  ],
+}],
+['find', '2', {
+  lede: 'Two metadata files: one widens what the list search looks at, the other puts the product filter first.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Lead.json', '<code>collection.textFilterFields</code> and <code>collection.fullTextSearch</code>'],
+    ['custom/Espo/Custom/Resources/layouts/Lead/filters.json', 'order of the filter panel'],
+  ],
+  how: [
+    '<code>textFilterFields</code> adds first name, last name, street, city and phone on top of the core three; each one becomes a <code>LIKE</code> clause built by <code>Espo\\Core\\Select\\Text\\DefaultFilter</code>.',
+    'For a phone field the server only runs the match when the input is digits, spaces or <code>+ ( ) -</code>, so typing <code>abc</code> never matches a phone number.',
+    '<code>fullTextSearch: true</code> also switches global search to relevance order.',
+  ],
+  change: [
+    'A field must exist in <code>entityDefs</code> first &mdash; an unknown name in <code>textFilterFields</code> is skipped silently.',
+    '<code>filters.json</code> only sets the order; the widget each filter uses comes from core field metadata.',
+  ],
+}],
+['amount', '3', {
+  lede: 'Client-side only: the Lead form watches the product list, fetches the prices it has not seen yet and writes the total.',
+  files: [
+    ['client/custom/src/views/lead/record/edit.js', 'sums the product prices into Opportunity Amount'],
+    ['client/custom/src/views/lead/record/edit-small.js', 'the same logic inside quick-create'],
+    ['custom/Espo/Custom/Resources/layouts/Lead/detail.json', 'where the amount is displayed'],
+  ],
+  how: [
+    '<code>metadata/clientDefs/Lead.json</code> registers both views under <code>recordViews.edit</code> and <code>recordViews.editSmall</code>.',
+    'The view listens to <code>change:cProductServicesIds</code> and reacts only to changes made in the UI (<code>options.ui</code>), so a load does not rewrite the field.',
+    'Prices come from <code>GET /CProductService?select=id,price</code>, are cached in <code>productPriceMap</code>, summed and rounded; an empty product list clears the amount.',
+  ],
+  change: [
+    '<code>productPriceMap</code> lives as long as the page does, so a price edited in another tab is only picked up after a reload.',
+    'The calculation never runs server side &mdash; the saved value is whatever the form held when Save was pressed.',
+  ],
+}],
+['a', '4', {
+  lede: 'Web Push, end to end: a navbar toggle, a service worker, a subscription record and a scheduled job that does the sending.',
+  files: [
+    ['client/custom/src/views/site/navbar/web-push.js', 'the bell; asks for permission only when you switch it on'],
+    ['client/custom/src/helpers/web-push-manager.js', 'registers <code>sw.js</code> and calls the subscription API'],
+    ['public/sw.js', 'receives the push and shows the system notification'],
+    ['custom/Espo/Custom/Controllers/PushSubscription.php', '<code>action/vapidPublicKey | status | subscribe | unsubscribe</code>'],
+    ['custom/Espo/Custom/Notification/NotificationService.php', '<code>notifyUser()</code> sends mail and push from one place'],
+    ['custom/Espo/Custom/WebPush/*.php', 'VAPID keys, payload encryption and the HTTP sender'],
+    ['client/custom/img/cgit-logo-192.png', 'the logo drawn on the system notification (192&times;192)'],
+  ],
+  how: [
+    '<code>metadata/app/clientNavbar.json</code> adds the item and points it at <code>custom:views/site/navbar/web-push</code> (template <code>custom:site/navbar/web-push</code>).',
+    'The subscription is a <code>PushSubscription</code> row with <code>acl: false</code>; muting is stored per user in the Preferences field <code>webPushMutedCategories</code>.',
+    'A scheduled job (<code>metadata/app/scheduledJobs.json</code>, every minute) is what actually pushes &mdash; nothing is pushed from the page request itself.',
+    'Full setup, tests and the production notes are in <code>custom/Docs/WebPush.md</code>.',
+  ],
+  change: [
+    'A new category needs <code>PushPreferences::CATEGORIES</code>, a Preferences field in <code>entityDefs</code>, and a bump of <code>SW_VERSION</code> in <code>public/sw.js</code> or old workers keep the old list.',
+    'The toast icon comes from <code>ICON</code> at the top of <code>public/sw.js</code>: give a replacement a new file name (the OS caches an icon against its URL) and bump <code>SW_VERSION</code>.',
+    'Push only works over HTTPS. The VAPID keys sit in <code>data/webpush-config.php</code>, which is not in git.',
+  ],
+}],
+['b', '5', {
+  lede: 'The history panel keeps all of its behaviour and gains one filter: the parent record&rsquo;s product services.',
+  files: [
+    ['client/custom/src/views/record/panels/history.js', 'sends <code>productServiceIds</code> and refreshes after a save'],
+    ['custom/Espo/Custom/Resources/metadata/app/clientRecord.json', 'swaps the panel view for every record type'],
+    ['custom/Espo/Custom/Tools/Activities/Api/Get.php', 'reads the query parameter'],
+    ['custom/Espo/Custom/Tools/Activities/Service.php', 'narrows the query to the product&rsquo;s calls'],
+    ['custom/Espo/Custom/Resources/routes.json', 'overrides the core Activities routes'],
+  ],
+  how: [
+    'Custom routes win because <code>Espo\\Core\\Utils\\Route::unify()</code> loads custom definitions first and skips duplicates, so <code>/Activities/:parentType/:id/:type</code> runs the custom controller.',
+    'The view copies <code>cProductServicesIds</code> into <code>collection.data.productServiceIds</code>; <code>Service::getActivitiesQuery()</code> restricts Calls to that list and returns an empty id list for every other type.',
+    'The panel refetches 150&nbsp;ms after <code>after:save</code>, so a call just made appears without a reload.',
+  ],
+  change: [
+    'Turn the filter off by not sending <code>productServiceIds</code> &mdash; the API treats it as absent and returns everything.',
+    'A record with no product service set is not filtered, so it still shows the full history.',
+  ],
+}],
+['calls-ps', '6', {
+  lede: 'A required link field plus two layouts &mdash; the column and the panel are metadata, not code.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Call.json', '<code>cProductServices</code>, <code>linkMultiple</code>, required'],
+    ['custom/Espo/Custom/Resources/layouts/Call/list.json', 'the Product Services column, width 16, after Parent'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/Call.json', 'relationship panel on the detail view'],
+    ['custom/Espo/Custom/Resources/i18n/en_US/Call.json', 'the column label'],
+  ],
+  how: [
+    'The link is <code>hasMany</code> through relation <code>cCallProductService</code>, declared on both ends so the two records stay in step.',
+    'Nothing visible was added in JavaScript &mdash; the column and the panel are read straight from layout JSON.',
+  ],
+  change: [
+    'Removing <code>required: true</code> reopens the option of saving a call with no product.',
+    'Layout edits need Admin &rarr; Clear Cache before the list rereads <code>layouts/Call/list.json</code>.',
+  ],
+}],
+['call-date-time', '7', {
+  lede: 'The defaults are still pure metadata; the relative wording is two tiny field views that only touch the form.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Call.json', 'the two fields, their defaults and their views'],
+    ['client/custom/src/views/fields/call-date.js', 'the grey line under Call Date'],
+    ['client/custom/src/views/fields/call-time.js', 'the grey line under Call Time'],
+    ['custom/Espo/Custom/Resources/layouts/Call/detail.json', 'where they sit on the detail view'],
+    ['custom/Espo/Custom/Resources/layouts/Call/detailSmall.json', 'and in the side panel'],
+    ['custom/Espo/Custom/Resources/i18n/en_US/Call.json', '"Call Date" and "Call Time"'],
+  ],
+  how: [
+    '<code>cCallDate</code> is a required <code>date</code> with <code>default: "javascript: return this.dateTime.getToday();"</code>.',
+    '<code>cCallTime</code> is a required <code>datetime</code> with <code>default: "javascript: return this.dateTime.getNow(1);"</code> and <code>minuteStep: 30</code>.',
+    'The <code>javascript:</code> prefix is evaluated by core against the model, so the value follows the user&rsquo;s own time zone rather than the server&rsquo;s.',
+    'Both fields carry a client-side <code>view</code> key, which is how core picks a field&rsquo;s class per entity; the two views extend <code>views/fields/date</code> and <code>views/fields/datetime</code> untouched.',
+    'The views append one <code>span.call-date-hint</code> under the field in edit mode only, and re-render it on <code>change:&lt;field&gt;</code>; the detail view keeps the wording core already writes.',
+    'The line reads <b>Today</b>, <b>Tomorrow</b> or <b>Yesterday</b>, comparing the stored day against <code>moment.tz(...).startOf(\'day\')</code> in the user&rsquo;s zone &mdash; the same range test core uses on the detail view.',
+  ],
+  change: [
+    'Neither field carries <code>duplicateIgnore</code>, so a duplicate (feature 9) copies them along with everything else.',
+    'Metadata edits require a cache clear before the defaults change.',
+    'Plain <code>client/custom/src</code> files load on demand and need no build step, but a cache clear still refreshes the metadata that points at them.',
+  ],
+}],
+['c', '8', {
+  lede: 'The Call form watches the Parent field, reads the lead, then either fills the product in or asks you which one applies.',
+  files: [
+    ['client/custom/src/views/call/record/edit.js', 'autofill on <code>change:parentId</code>'],
+    ['client/custom/src/views/call/record/edit-small.js', 'the same, inside quick-create'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/Call.json', 'registers both views'],
+    ['client/custom/src/views/modals/select-product-service.js', 'the product picker'],
+    ['client/custom/res/templates/modals/select-product-service.tpl', 'its checkbox list'],
+  ],
+  how: [
+    'The view reacts only to UI changes (<code>options.ui</code>) and requests <code>GET /Lead/&lt;id&gt;?select=id,name,cProductServicesIds,cProductServicesNames</code>.',
+    'One product is written straight into <code>cProductServicesIds/Names</code>; several open the modal and wait for its <code>select</code> event.',
+    'The call name is filled only while it is empty, so it never overwrites something you typed.',
+  ],
+  change: [
+    '<code>cProductServices</code> is required, and the modal starts with nothing selected &mdash; a multi-product lead left unanswered blocks Save.',
+    'The modal is custom too: it is created as <code>custom:views/modals/select-product-service</code>.',
+  ],
+}],
+['d', '9', {
+  lede: 'One field flag. Core&rsquo;s duplicator drops anything marked <code>duplicateIgnore</code>, so the copy arrives with an empty description.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Call.json', '<code>description</code> set to <code>required</code> + <code>duplicateIgnore</code>'],
+    ['application/Espo/Core/Record/Duplicator/EntityDuplicator.php', 'core code that honours the flag &mdash; read-only reference'],
+    ['custom/Espo/Custom/Hooks/Call/DescriptionDiff.php', 'records what is typed afterwards'],
+    ['custom/Espo/Custom/Hooks/Meeting/DescriptionDiff.php', 'the same hook for meetings'],
+  ],
+  how: [
+    'Duplicate on the detail view posts to <code>Call/action/getDuplicateAttributes</code>, then creates with <code>options.duplicateSourceId</code>.',
+    '<code>Espo\\Core\\Record\\Service::getDuplicateAttributes()</code> runs the duplicator, which unsets every <code>duplicateIgnore</code> field.',
+    '<code>status</code> is never copied by core, so a duplicate starts at its default (Planned).',
+    '<code>DescriptionDiff</code> reads the <code>X-Duplicate-Source-Id</code> header so it knows the copy has no baseline text.',
+  ],
+  change: [
+    'Delete <code>duplicateIgnore</code> from <code>entityDefs/Call.json</code> and duplicates behave exactly as they did before.',
+    'Fields added later are copied by default &mdash; mark them <code>duplicateIgnore</code> if they should not be.',
+  ],
+}],
+['e', '10', {
+  lede: 'There is no feature code here at all: three values in one config file do the whole job.',
+  files: [
+    ['data/config.php', '<code>timeZone</code>, <code>dateFormat</code>, <code>timeFormat</code> and <code>weekStart</code>'],
+  ],
+  how: [
+    'The file holds <code>timeZone: Asia/Dhaka</code>, <code>dateFormat: DD/MM/YYYY</code>, <code>timeFormat: hh:mm A</code> and <code>weekStart: 0</code>.',
+    'PHP reads them through <code>Espo\\Core\\Utils\\Config</code>; the browser receives them from the config API and formats every date it draws.',
+    'Timestamps are still stored in UTC &mdash; only the display changes.',
+    'Nothing under <code>custom/</code> or <code>client/custom/</code> mentions these keys.',
+  ],
+  change: [
+    'Admin &rarr; Settings writes the same values, so <code>data/config.php</code> is a starting point rather than a lock.',
+    'Change the format in one place and the calendar, lists and forms all follow (the calendar week runs Sunday to Saturday because of <code>weekStart</code>).',
+  ],
+}],
+['f', '11', {
+  lede: 'Two client views: one copies the parent&rsquo;s name into the meeting name, the other puts you on the invite.',
+  files: [
+    ['client/custom/src/views/meeting/record/edit.js', 'name autofill and attendee prefill'],
+    ['client/custom/src/views/meeting/record/edit-small.js', 'extends the edit view for quick-create'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/Meeting.json', 'registers <code>recordViews.edit</code> and <code>editSmall</code>'],
+  ],
+  how: [
+    '<code>fetchParentName()</code> runs on <code>change:parentId change:parentType</code>, requests <code>&lt;parentType&gt;/&lt;id&gt;?select=id,name</code>, and writes <code>name</code> only while it is empty or still holds a value this view wrote itself.',
+    '<code>fillAttendees()</code> runs only for a new meeting with no attendees and sets <code>usersIds / usersNames / usersColumns</code> to the logged-in user.',
+  ],
+  change: [
+    'The name step is skipped for parent types with no <code>name</code> field in <code>entityDefs</code>.',
+    'Typing a name by hand stops the autofill for good &mdash; the view remembers what it wrote in <code>autoFilledName</code>.',
+  ],
+}],
+['lead-owner', '12', {
+  lede: 'A model-default preparator: core asks it for values just before a new Lead form opens.',
+  files: [
+    ['client/custom/src/handlers/lead/defaults-preparator.js', 'returns <code>assignedUserId</code> and <code>assignedUserName</code>'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/Lead.json', 'the key <code>modelDefaultsPreparator</code>'],
+  ],
+  how: [
+    'Core <code>helpers/model/defaults-populator</code> calls <code>prepare(model)</code> for a new model only, then applies the result silently; anything supplied in the URL is applied afterwards and wins.',
+    'The handler returns <code>{}</code> when the lead already has an owner, or when the entity has no <code>assignedUser</code> field.',
+    'Teams are not touched.',
+  ],
+  change: [
+    '<code>prepare()</code> must never throw &mdash; the create form awaits it.',
+    'Another entity needs its own <code>clientDefs</code> entry pointing at its own handler.',
+  ],
+}],
+['calendar-week', '13', {
+  lede: 'A custom calendar view layered over the core CRM calendar: the same events, rendered the way Month already renders them.',
+  files: [
+    ['client/custom/src/views/calendar/calendar.js', '<code>titleFormat</code>, <code>dayHeaderContent</code>, <code>eventContent</code>, <code>eventClassNames</code>'],
+    ['client/custom/res/templates/calendar/calendar.tpl', 'the toolbar: prev / next / Today, the date title, the mode buttons'],
+    ['client/custom/css/calendar-week.css', 'the Month-matched styling'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/Calendar.json', 'registers the view, the template and the stylesheet'],
+  ],
+  how: [
+    'Fields on an <code>Dep.extend</code> class are shadowed by class fields, so <code>template</code>, <code>titleFormat</code> and <code>events</code> are assigned inside <code>setup()</code> rather than at class level.',
+    '<code>dayHeaderContent</code> builds the weekday and date whenever <code>arg.view.type.indexOf(\'timeGrid\') === 0</code> &mdash; that is Week and Day; Month returns <code>arg.text</code> untouched.',
+    '<code>eventContent</code> adds the type and status chips when <code>hasEventMeta()</code> (all-day, or at least <code>MIN_META_DURATION</code> = 45 minutes) plus the attendee rows beneath.',
+    'The title uses <code>titleFormat.week = \'D MMM YYYY\'</code> joined by core&rsquo;s <code>rangeSeparator</code> (<code>&nbsp;&ndash;&nbsp;</code>).',
+  ],
+  change: [
+    'Custom CSS is appended to <code>cssList</code>, so <code>calendar-week.css</code> loads after <code>espo.css</code> &mdash; that is why plain <code>:root</code> overrides such as <code>--fc-today-bg-color</code> win.',
+    'FullCalendar is told about every change through <code>setOption</code> from an instance-accessor setter, which runs before <code>render()</code>, so there is no flash of the old style.',
+    'The toolbar is a <code>custom:</code> template &mdash; adding a button means editing <code>calendar.tpl</code>, never the core file.',
+  ],
+}],
+['calls-search', '14', {
+  lede: 'Two metadata entries and one small class &mdash; the search box is given one more field to match, and the join behind it is de-duplicated.',
+  files: [
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Call.json', '<code>collection.textFilterFields</code> gains <code>cProductServices.name</code>'],
+    ['custom/Espo/Custom/Resources/metadata/selectDefs/Call.json', 'matches anywhere in the text, and picks the filter class'],
+    ['custom/Espo/Custom/Classes/Select/Call/TextFilter.php', 'adds DISTINCT for the many-to-many join'],
+  ],
+  how: [
+    'List search reads <code>entityDefs.Call.collection.textFilterFields</code>; a dotted entry such as <code>cProductServices.name</code> is left-joined and searched alongside <code>name</code> &mdash; the same shape core already uses for <code>CampaignLogRecord</code>.',
+    'Both sides of the product link are <code>hasMany</code>, so the ORM makes it many-to-many through a middle table and one call joins one row per product. Core <code>DefaultFilter</code> adds DISTINCT only for <code>hasMany</code>, which would list a two-product call twice.',
+    '<code>selectDefs.Call.textFilterClassName</code> therefore points at a subclass of <code>DefaultFilter</code> that calls <code>distinct()</code> whenever a joined attribute is in the filter, so no core file is touched.',
+    '<code>selectDefs.Call.textFilterUseContainsAttributeList</code> makes the product name match anywhere in the text from four characters up; the call name keeps core behaviour.',
+  ],
+  change: [
+    'Metadata only &mdash; clear the cache after any edit to <code>entityDefs/Call.json</code> or <code>selectDefs/Call.json</code>.',
+    'Deleting the <code>cProductServices</code> field leaves the dotted entry behind: remove <code>collection.textFilterFields</code> and the <code>selectDefs</code> entries at the same time, or the search errors out.',
+    'Drop <code>textFilterUseContainsAttributeList</code> and the product name matches from the start only, like the call name.',
+    'The class is needed only while the relation is many-to-many; if the product link ever becomes a plain <code>belongsTo</code>, delete it along with the <code>textFilterClassName</code> line.',
+  ],
+}],
+['meeting-reminders', '15', {
+  lede: 'The twin of the Call Route reminder: a scheduled job scans for meetings whose Date Start has arrived and hands each one to the shared NotificationService.',
+  files: [
+    ['custom/Espo/Custom/Jobs/MeetingReminders.php', 'the scheduled job'],
+    ['custom/Espo/Custom/Resources/metadata/app/scheduledJobs.json', 'registers it to run every minute'],
+    ['custom/Espo/Custom/Resources/metadata/entityDefs/Meeting.json', 'the marker field that remembers what was already notified'],
+    ['custom/Espo/Custom/Resources/i18n/en_US/Meeting.json', 'the message and push wording'],
+    ['custom/Espo/Custom/Resources/i18n/en_US/ScheduledJob.json', 'the job label in Admin &rarr; Scheduled Jobs'],
+  ],
+  how: [
+    'The job reads <code>scopes.Meeting.activityStatusList</code> (Planned) and asks for every meeting whose <code>dateStart</code> is at or before now but inside the last <code>reminderPastHours</code> (default 24).',
+    'A datetime marker field remembers which Date Start was already notified; a matching value short-circuits, so a scheduler that runs every minute produces exactly one notification.',
+    'When the meeting is rescheduled the old notification row is deleted before the new one is created, so the panel never shows a stale time.',
+    'Delivery goes through the shared NotificationService: persistent Notification, popup Reminder, WebSocket refresh and Web Push &mdash; category <code>meeting</code>, which already existed in the push preferences, so meeting pushes are distinguishable from call pushes.',
+    'The scheduled job row is created by the metadata entry (<code>isDefault</code>) on install; on an existing install create it once from Admin &rarr; Scheduled Jobs or the API.',
+  ],
+  change: [
+    'Clear the cache after editing any of the metadata files.',
+    'The marker column is a plain datetime on the meeting table; removing the field means dropping the column and the marker comparisons together.',
+    '<code>reminderPastHours</code> in the config widens or narrows the catch-up window for both the call and the meeting reminder.',
+    'A third copy of this pattern (Task reminders) would mean three near-identical jobs &mdash; at that point extract a shared base job.',
+  ],
+}],
+];
+
+const devBlock = (id, num, d) => `
+<details class="dev" id="dev-${id}">
+  <summary><span class="dev-kicker">For developers</span><span class="dev-t">How feature ${num} is built</span></summary>
+  <div class="dev-inner">
+    <p class="dev-lede">${d.lede}</p>
+    <div class="dev-h">Files touched</div>
+    <ul class="dev-list">${d.files.map((f) => `<li><code>${f[0]}</code> <span class="k">&mdash;</span> ${f[1]}</li>`).join('')}</ul>
+    <div class="dev-h">How it works</div>
+    <ul class="dev-list">${d.how.map((t) => `<li>${t}</li>`).join('')}</ul>
+    <div class="dev-h">If you change it</div>
+    <ul class="dev-list">${d.change.map((t) => `<li>${t}</li>`).join('')}</ul>
+  </div>
+</details>`;
+
+/* Insert each note just before the closing tag of its own section. */
+const withDevNotes = (page) => {
+  let out = page;
+  for (const [id, num, doc] of DEV) {
+    const start = out.indexOf(`<section id="${id}">`);
+    if (start < 0) { throw new Error('section not found: ' + id); }
+    const end = out.indexOf('</section>', start);
+    if (end < 0) { throw new Error('section not closed: ' + id); }
+    out = out.slice(0, end) + devBlock(id, num, doc) + '\n' + out.slice(end);
+  }
+  return out;
+};
 
 /* ==================================================================== CSS */
 const CSS = `
@@ -1096,6 +1465,37 @@ details.appx[open]>summary{border-bottom:1px solid var(--line);background:#fafbf
 details.appx .inner{padding:24px 34px 30px}
 details.appx h3{margin-top:6px}
 details.appx h3:not(:first-child){margin-top:26px}
+
+/* ---- per-feature developer notes (closed by default) ---- */
+details.dev{margin-top:20px;background:#f7f9fc;border:1px solid var(--line);
+  border-radius:10px;overflow:hidden}
+details.dev>summary{cursor:pointer;list-style:none;padding:11px 18px;
+  display:flex;align-items:center;gap:11px;color:#7b8794;font-size:13.5px;
+  user-select:none}
+details.dev>summary::-webkit-details-marker{display:none}
+details.dev>summary::before{content:"\\25B8";color:var(--accent);font-size:11px}
+details.dev[open]>summary::before{content:"\\25BE"}
+details.dev>summary:hover{background:#eef2f7;color:#48545f}
+details.dev[open]>summary{background:#eef2f7;border-bottom:1px solid var(--line);
+  color:#48545f;font-weight:600}
+.dev-kicker{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  font-weight:700;color:var(--accent-ink);background:#e9f1ff;border:1px solid #d3e2fb;
+  border-radius:999px;padding:3px 9px}
+.dev-t{color:inherit}
+.dev-inner{padding:18px 24px 22px;background:#fff}
+.dev-lede{margin:0 0 4px;font-size:13.5px;color:#5b6672;max-width:86ch}
+.dev-h{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#9aa5b1;
+  font-weight:700;margin:20px 0 9px}
+.dev-inner>p+.dev-h,.dev-lede+.dev-h{margin-top:14px}
+.dev-h:first-child{margin-top:0}
+.dev-list{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-width:98ch}
+.dev-list li{margin:0;padding-left:16px;position:relative;font-size:13.5px;
+  line-height:1.62;color:#48545f}
+.dev-list li::before{content:"";position:absolute;left:1px;top:8px;width:5px;height:5px;
+  border-radius:50%;background:#c8d3e0}
+.dev-list code{font-size:12.5px;background:#eef2f7;border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px;word-break:break-word}
+.dev-list .k{color:#9aa5b1}
 .codeblock{margin:14px 0;border:1px solid #1e293b;border-radius:8px;overflow:hidden}
 .codeblock-h{background:#1e293b;color:#9fb0c6;font-size:11px;letter-spacing:.07em;
   text-transform:uppercase;padding:8px 14px;font-weight:700;font-family:Consolas,monospace}
@@ -1285,6 +1685,7 @@ table.lt td.r{text-align:right;font-family:Consolas,monospace;font-size:13px;
 .ui-alert b{color:#6a3f00}
 .ui-err{display:flex;gap:6px;align-items:center;color:#e5484d;font-size:12.5px;
   margin-top:5px;font-weight:600}
+.ui-hint{margin-top:3px;font-size:12px;color:#8794a1;line-height:1.3}
 /* before/after table */
 .ui.plain{background:none;border:none;box-shadow:none;padding:0;border-radius:0}
 table.dt{width:100%;border-collapse:collapse;background:#fff;
@@ -1391,6 +1792,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   .layout{flex-direction:column;padding:0 14px}
   section{padding:24px 20px 26px}
   details.appx>summary,details.appx .inner{padding-left:20px;padding-right:20px}
+  details.dev>summary{padding-left:16px;padding-right:16px}
+  .dev-inner{padding-left:18px;padding-right:18px}
 }
 @media print{
   nav{display:none}
@@ -1398,6 +1801,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   section{break-inside:avoid;border:1px solid #ccc}
   .shot{break-inside:avoid}
   details.appx{display:none}
+  details.dev{display:none}
 }
 `;
 
@@ -1430,6 +1834,8 @@ const html = `<!DOCTYPE html>
     <li><a href="#f">11. Meetings</a></li>
     <li><a href="#lead-owner">12. New leads start with you</a></li>
     <li><a href="#calendar-week">13. Calendar week view</a></li>
+    <li><a href="#calls-search">14. Find a call by its product</a></li>
+    <li><a href="#meeting-reminders">15. Meetings remind you too</a></li>
     <li><a href="#status">Quality &amp; safety</a></li>
   </ol>
 </nav>
@@ -1437,12 +1843,12 @@ const html = `<!DOCTYPE html>
 <main>
 <header class="doc">
   <h1>EspoCRM Feature Guide</h1>
-  <p class="sub">Thirteen improvements made to this EspoCRM instance, explained in plain
+  <p class="sub">Fifteen improvements made to this EspoCRM instance, explained in plain
   language with a picture of each screen.</p>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
-    <span>13 features</span>
-    <span>Updated 5 October 2026</span>
+    <span>15 features</span>
+    <span>Updated 11 October 2026</span>
   </div>
 </header>
 
@@ -1617,8 +2023,16 @@ ${featureRows}
     <li class="yes">Notifications are only ever switched on by you clicking the bell &mdash; no pop-ups appear on their own.</li>
     <li class="yes">You can mute individual categories from your preferences.</li>
     <li class="yes">The same bell shows at a glance whether notifications are on, off or blocked.</li>
+    <li class="yes">The banner carries your own logo rather than the EspoCRM one.</li>
     <li class="no">Needs HTTPS (or localhost) and the scheduled job to be running.</li>
   </ul>
+
+  <div class="note"><b>Brave says &ldquo;Notifications were not enabled&rdquo;?</b>
+  Brave blocks web push by default, so the bell turns on and then quietly fails.
+  Open <code>brave://settings/privacy</code>, switch on <b>Use Google services for
+  push messaging</b>, close Brave completely and start it again, then click the bell
+  once more. The restart is required &mdash; the switch does nothing until Brave is
+  reopened. Chrome, Edge and Firefox need no extra step.</div>
 </section>
 
 <!-- ==================================================================== 2 -->
@@ -1660,11 +2074,13 @@ ${featureRows}
   <h2><span class="tag">7</span>Call date and time fill themselves in</h2>
   <p class="lede">Two fields &mdash; <b>Call Date</b> and <b>Call Time</b> &mdash; now sit on
   every call form, and both arrive already filled in: today&rsquo;s date, and the time
-  right now. Nothing has to be typed before the call can be saved.</p>
+  right now. A small grey line under each one spells out what those boxes mean &mdash;
+  <b>Today</b>, <b>Today 03:57 PM</b> &mdash; so nothing has to be decoded before the
+  call can be saved.</p>
 
   ${shot('A new call, the moment it is opened', L1,
-      li(1, 'Call Date has already been set to today &mdash; highlighted because you did not type it') +
-      li(2, 'Call Time has already been set to the current minute') +
+      li(1, 'Call Date is already set to today, and its grey line reads <b>Today</b>') +
+      li(2, 'Call Time is already set to the current minute, and its line reads <b>Today 03:57 PM</b>') +
       li(3, 'Fill in the description and the whole form is complete'))}
 
   ${shot('How the two fields read once the call is saved', L2,
@@ -1680,6 +2096,8 @@ ${featureRows}
       <tr><td>Both fields</td><td>required &mdash; a call cannot be saved without them</td></tr>
       <tr><td>The time picker</td><td>offers half-hour steps, while the default is the exact minute you opened the form</td></tr>
       <tr><td>In the form</td><td>they read <b>02/10/2026</b> and <b>03:57 PM</b>, the local format from section&nbsp;10</td></tr>
+      <tr><td>The grey line</td><td>under each field spells the value out as <b>Today</b>, <b>Tomorrow</b> or <b>Yesterday</b> &mdash; and moves the moment you pick another day</td></tr>
+      <tr><td>Any other date</td><td>the Call Date line stays silent, since the box already reads that date; the Call Time line shows the full date and time</td></tr>
       <tr><td>On the saved record</td><td>they read <b>Today</b> and <b>Today 03:57 PM</b></td></tr>
       <tr><td>After saving</td><td>they never move on their own &mdash; correct them by hand if the call was logged at another time</td></tr>
     </tbody>
@@ -1689,6 +2107,7 @@ ${featureRows}
   <ul class="bullets">
     <li class="yes">Both fields sit just below Date Start, Date End, Duration and Product Services &mdash; in the full form and the small pop-up alike.</li>
     <li class="yes">Because they arrive filled in, saving a call needs only two things: pick the lead and write the note.</li>
+    <li class="yes">The grey line is only there to be read &mdash; the real date and time stay in the boxes, and that is what gets saved.</li>
     <li class="yes">They describe <i>when the call was logged</i>; Date Start and Date End still describe <i>when it happens</i>.</li>
     <li class="yes">The values are stored, so the figure you read is the figure that was true at the time.</li>
   </ul>
@@ -1880,6 +2299,74 @@ ${featureRows}
   </ul>
 </section>
 
+<!-- ==================================================================== 14 -->
+<section id="calls-search">
+  <h2><span class="tag">14</span>Find a call by its product</h2>
+  <p class="lede">The search box on the Calls list no longer looks at the call name alone.
+  Type the name of a product service and the calls about that product come back too
+  &mdash; no need to open each call to see what it was about.</p>
+
+  ${shot('Searching the Calls list', K1s,
+      li(1, 'A product service name is typed into the search box') +
+      li(2, 'A call about Y and X is still one row, listed once') +
+      li(3, 'The total counts the calls shown, not the joined rows'))}
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:40%">You type</th><th>What comes back</th></tr></thead>
+    <tbody>
+      <tr><td><b>MIH</b></td><td>every call whose name starts with MIH, exactly as before</td></tr>
+      <tr><td><b>Y</b></td><td>every call about the product service Y</td></tr>
+      <tr><td><b>Widget</b></td><td>calls about <b>ZetaWidget5000</b> &mdash; a product name matches anywhere in the text</td></tr>
+      <tr><td><b>ZZZZQQ</b></td><td>nothing, because nothing matches</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">A call about two products is still one row &mdash; searching never shows the same call twice.</li>
+    <li class="yes">Sorting keeps working while a search is on, whatever column the list is ordered by.</li>
+    <li class="yes">Filters, primary filters and the count above the list behave exactly as they did.</li>
+    <li class="no">A product name matches anywhere in the text from four characters up; a shorter search still matches from the start of the name.</li>
+    <li class="no">The call name itself still matches from the start only &mdash; that is core EspoCRM behaviour and was left alone.</li>
+    <li class="no">The Leads list keeps its own search, which matches the lead fields from section&nbsp;2 and does not look at products.</li>
+  </ul>
+</section>
+
+<!-- ==================================================================== 15 -->
+<section id="meeting-reminders">
+  <h2><span class="tag">15</span>Meetings remind you too</h2>
+  <p class="lede">The reminder that already fires for calls now fires for meetings: the moment a
+  meeting&rsquo;s Date Start arrives, the person it is assigned to is told &mdash; a pop-up while the
+  app is open, a line in the notification panel, and a desktop notification if the bell from
+  section&nbsp;4 is on. Nothing has to be set up.</p>
+
+  ${shot('The reminder when a meeting starts', MR1,
+      li(1, 'The title reads Meeting Reminder') +
+      li(2, 'The meeting is named, and told that it is starting now'))}
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:40%">About</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><b>Who is reminded</b></td><td>the meeting&rsquo;s Assigned User</td></tr>
+      <tr><td><b>When</b></td><td>the moment the meeting&rsquo;s Date Start is reached &mdash; once, not every minute</td></tr>
+      <tr><td>Meetings already passed</td><td>a meeting whose time has just gone by still catches up with one reminder, for up to a day</td></tr>
+      <tr><td>Status</td><td>only while the meeting is still <b>Planned</b> &mdash; Held or Not Held meetings are left alone</td></tr>
+      <tr><td>Where it appears</td><td>pop-up, notification panel and desktop notification, the same three places as the call reminder</td></tr>
+      <tr><td>Meeting time changed</td><td>the old reminder disappears and a new one waits for the new time</td></tr>
+      <tr><td>Clicking it</td><td>opens the meeting, from the notification or the desktop alert alike</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">Nothing has to be set up: every planned meeting with an assigned user and a Date Start is covered from now on.</li>
+    <li class="yes">The reminder fires once per meeting time, however often the scheduler runs.</li>
+    <li class="yes">Meeting reminders travel the same road as call reminders &mdash; pop-up, panel and push &mdash; and are labelled separately, so one can be muted without the other.</li>
+  </ul>
+</section>
+
 <!-- ==================================================================== 7 -->
 <section id="status">
   <h2>Quality &amp; safety</h2>
@@ -1891,7 +2378,7 @@ ${featureRows}
 </section>
 
 <footer>
-  EspoCRM Feature Guide &middot; version 1.4 &middot; updated 5 October 2026
+  EspoCRM Feature Guide &middot; version 1.5 &middot; updated 11 October 2026
 </footer>
 </main>
 </div>
@@ -1940,5 +2427,6 @@ ${featureRows}
 `;
 
 fs.mkdirSync(OUT, { recursive: true });
-fs.writeFileSync(path.join(OUT, 'index.html'), html, 'utf8');
-console.log('written:', path.join(OUT, 'index.html'), html.length, 'bytes');
+const page = withDevNotes(html);
+fs.writeFileSync(path.join(OUT, 'index.html'), page, 'utf8');
+console.log('written:', path.join(OUT, 'index.html'), page.length, 'bytes');
