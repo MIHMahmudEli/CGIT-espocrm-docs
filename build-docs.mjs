@@ -1055,7 +1055,7 @@ const features = [
     ['5', 'History shows only what matters', 'A record&rsquo;s history now lists only the activity belonging to its own product service.', '#b'],
     ['6', 'Calls show their product service', 'Every call carries its product, listed in its own column on the Calls list.', '#calls-ps'],
     ['7', 'Call date and time fill in', 'Two new fields on the call form arrive with today&rsquo;s date and the current time already in them.', '#call-date-time'],
-    ['8', 'Calls fill themselves in', 'Choosing a lead completes the call form &mdash; or asks you which product applies.', '#c'],
+    ['8', 'Calls fill themselves in', 'Choosing a lead completes the call or meeting form &mdash; or asks you which product applies.', '#c'],
     ['9', 'Duplicate, then describe', 'Duplicating a call copies everything except the description, which arrives empty &mdash; you must fill it in before the call can be saved.', '#d'],
     ['10', 'Local date and time format', 'While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.', '#e'],
     ['11', 'Meetings start faster', 'The meeting name fills itself in and you are already on the invite.', '#f'],
@@ -1209,10 +1209,11 @@ const DEV = [
   ],
 }],
 ['c', '8', {
-  lede: 'The Call form watches the Parent field, reads the lead, then either fills the product in or asks you which one applies.',
+  lede: 'The Call form watches the Parent field, reads the lead, then either fills the product in or asks you which one applies &mdash; and the Meeting form watches the same way.',
   files: [
     ['client/custom/src/views/call/record/edit.js', 'autofill on <code>change:parentId</code>'],
     ['client/custom/src/views/call/record/edit-small.js', 'the same, inside quick-create'],
+    ['client/custom/src/views/meeting/record/edit.js', 'the same watchers, on the Meeting form'],
     ['custom/Espo/Custom/Resources/metadata/clientDefs/Call.json', 'registers both views'],
     ['client/custom/src/views/modals/select-product-service.js', 'the product picker'],
     ['client/custom/res/templates/modals/select-product-service.tpl', 'its checkbox list'],
@@ -1221,10 +1222,12 @@ const DEV = [
     'The view reacts only to UI changes (<code>options.ui</code>) and requests <code>GET /Lead/&lt;id&gt;?select=id,name,cProductServicesIds,cProductServicesNames</code>.',
     'One product is written straight into <code>cProductServicesIds/Names</code>; several open the modal and wait for its <code>select</code> event.',
     'The call name is filled only while it is empty, so it never overwrites something you typed.',
+    'The Meeting edit view carries these exact watchers and the same modal; opening a meeting whose products are already set leaves them alone.',
   ],
   change: [
     '<code>cProductServices</code> is required, and the modal starts with nothing selected &mdash; a multi-product lead left unanswered blocks Save.',
     'The modal is custom too: it is created as <code>custom:views/modals/select-product-service</code>.',
+    'Meeting&rsquo;s <code>cProductServices</code> was marked required in <code>entityDefs/Meeting.json</code> when the prefill arrived, so both activity forms validate alike.',
   ],
 }],
 ['d', '9', {
@@ -1265,7 +1268,7 @@ const DEV = [
 ['f', '11', {
   lede: 'Two client views: one copies the parent&rsquo;s name into the meeting name, the other puts you on the invite.',
   files: [
-    ['client/custom/src/views/meeting/record/edit.js', 'name autofill and attendee prefill'],
+    ['client/custom/src/views/meeting/record/edit.js', 'name autofill, attendee prefill and the feature 8 product watchers'],
     ['client/custom/src/views/meeting/record/edit-small.js', 'extends the edit view for quick-create'],
     ['custom/Espo/Custom/Resources/metadata/clientDefs/Meeting.json', 'registers <code>recordViews.edit</code> and <code>editSmall</code>'],
   ],
@@ -2119,7 +2122,8 @@ ${featureRows}
   <p class="lede">When you set a call&rsquo;s parent to a lead, the form completes
   itself: the name comes from the lead and the product service &mdash; from the catalogue
   in section&nbsp;1 &mdash; is chosen for you. If that lead covers several products, you
-  are asked which one applies.</p>
+  are asked which one applies. The same happens on a meeting: set its parent to a lead
+  and the products arrive there too.</p>
 
   ${shot('The moment a lead is chosen', C1,
       li(1, 'Name is taken from the lead, unless you have typed your own') +
@@ -2144,6 +2148,11 @@ ${featureRows}
     </tbody>
   </table>
   </div>
+
+  <ul class="bullets">
+    <li class="yes">Meetings behave the same &mdash; parent a lead and the products fill themselves in, picker included, even in the small calendar form.</li>
+    <li class="yes">Product Services is required on a meeting too, so a multi-product lead left unanswered blocks Save there just as it does on a call.</li>
+  </ul>
 </section>
 
 <!-- ==================================================================== 4 -->

@@ -52,6 +52,8 @@ const checks = [
     ['product search figure', /Searching the Calls list/],
     ['meeting reminders section', /id="meeting-reminders"/],
     ['meeting reminders figure', /The reminder when a meeting starts/],
+    ['meeting prefill in feature 8', /Meetings behave the same/],
+    ['meeting prefill dev note', /the same watchers, on the Meeting form/],
 ];
 for (const [label, re] of checks) re.test(h) ? ok(label) : fail(label);
 

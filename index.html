@@ -476,7 +476,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <tr><td class="num">5</td><td><a href="#b">History shows only what matters</a></td><td>A record&rsquo;s history now lists only the activity belonging to its own product service.</td></tr>
 <tr><td class="num">6</td><td><a href="#calls-ps">Calls show their product service</a></td><td>Every call carries its product, listed in its own column on the Calls list.</td></tr>
 <tr><td class="num">7</td><td><a href="#call-date-time">Call date and time fill in</a></td><td>Two new fields on the call form arrive with today&rsquo;s date and the current time already in them.</td></tr>
-<tr><td class="num">8</td><td><a href="#c">Calls fill themselves in</a></td><td>Choosing a lead completes the call form &mdash; or asks you which product applies.</td></tr>
+<tr><td class="num">8</td><td><a href="#c">Calls fill themselves in</a></td><td>Choosing a lead completes the call or meeting form &mdash; or asks you which product applies.</td></tr>
 <tr><td class="num">9</td><td><a href="#d">Duplicate, then describe</a></td><td>Duplicating a call copies everything except the description, which arrives empty &mdash; you must fill it in before the call can be saved.</td></tr>
 <tr><td class="num">10</td><td><a href="#e">Local date and time format</a></td><td>While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.</td></tr>
 <tr><td class="num">11</td><td><a href="#f">Meetings start faster</a></td><td>The meeting name fills itself in and you are already on the invite.</td></tr>
@@ -1112,7 +1112,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   <p class="lede">When you set a call&rsquo;s parent to a lead, the form completes
   itself: the name comes from the lead and the product service &mdash; from the catalogue
   in section&nbsp;1 &mdash; is chosen for you. If that lead covers several products, you
-  are asked which one applies.</p>
+  are asked which one applies. The same happens on a meeting: set its parent to a lead
+  and the products arrive there too.</p>
 
   <figure class="shot"><figcaption class="shot-cap">The moment a lead is chosen</figcaption>
 <div class="ui">
@@ -1223,16 +1224,21 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   </table>
   </div>
 
+  <ul class="bullets">
+    <li class="yes">Meetings behave the same &mdash; parent a lead and the products fill themselves in, picker included, even in the small calendar form.</li>
+    <li class="yes">Product Services is required on a meeting too, so a multi-product lead left unanswered blocks Save there just as it does on a call.</li>
+  </ul>
+
 <details class="dev" id="dev-c">
   <summary><span class="dev-kicker">For developers</span><span class="dev-t">How feature 8 is built</span></summary>
   <div class="dev-inner">
-    <p class="dev-lede">The Call form watches the Parent field, reads the lead, then either fills the product in or asks you which one applies.</p>
+    <p class="dev-lede">The Call form watches the Parent field, reads the lead, then either fills the product in or asks you which one applies &mdash; and the Meeting form watches the same way.</p>
     <div class="dev-h">Files touched</div>
-    <ul class="dev-list"><li><code>client/custom/src/views/call/record/edit.js</code> <span class="k">&mdash;</span> autofill on <code>change:parentId</code></li><li><code>client/custom/src/views/call/record/edit-small.js</code> <span class="k">&mdash;</span> the same, inside quick-create</li><li><code>custom/Espo/Custom/Resources/metadata/clientDefs/Call.json</code> <span class="k">&mdash;</span> registers both views</li><li><code>client/custom/src/views/modals/select-product-service.js</code> <span class="k">&mdash;</span> the product picker</li><li><code>client/custom/res/templates/modals/select-product-service.tpl</code> <span class="k">&mdash;</span> its checkbox list</li></ul>
+    <ul class="dev-list"><li><code>client/custom/src/views/call/record/edit.js</code> <span class="k">&mdash;</span> autofill on <code>change:parentId</code></li><li><code>client/custom/src/views/call/record/edit-small.js</code> <span class="k">&mdash;</span> the same, inside quick-create</li><li><code>client/custom/src/views/meeting/record/edit.js</code> <span class="k">&mdash;</span> the same watchers, on the Meeting form</li><li><code>custom/Espo/Custom/Resources/metadata/clientDefs/Call.json</code> <span class="k">&mdash;</span> registers both views</li><li><code>client/custom/src/views/modals/select-product-service.js</code> <span class="k">&mdash;</span> the product picker</li><li><code>client/custom/res/templates/modals/select-product-service.tpl</code> <span class="k">&mdash;</span> its checkbox list</li></ul>
     <div class="dev-h">How it works</div>
-    <ul class="dev-list"><li>The view reacts only to UI changes (<code>options.ui</code>) and requests <code>GET /Lead/&lt;id&gt;?select=id,name,cProductServicesIds,cProductServicesNames</code>.</li><li>One product is written straight into <code>cProductServicesIds/Names</code>; several open the modal and wait for its <code>select</code> event.</li><li>The call name is filled only while it is empty, so it never overwrites something you typed.</li></ul>
+    <ul class="dev-list"><li>The view reacts only to UI changes (<code>options.ui</code>) and requests <code>GET /Lead/&lt;id&gt;?select=id,name,cProductServicesIds,cProductServicesNames</code>.</li><li>One product is written straight into <code>cProductServicesIds/Names</code>; several open the modal and wait for its <code>select</code> event.</li><li>The call name is filled only while it is empty, so it never overwrites something you typed.</li><li>The Meeting edit view carries these exact watchers and the same modal; opening a meeting whose products are already set leaves them alone.</li></ul>
     <div class="dev-h">If you change it</div>
-    <ul class="dev-list"><li><code>cProductServices</code> is required, and the modal starts with nothing selected &mdash; a multi-product lead left unanswered blocks Save.</li><li>The modal is custom too: it is created as <code>custom:views/modals/select-product-service</code>.</li></ul>
+    <ul class="dev-list"><li><code>cProductServices</code> is required, and the modal starts with nothing selected &mdash; a multi-product lead left unanswered blocks Save.</li><li>The modal is custom too: it is created as <code>custom:views/modals/select-product-service</code>.</li><li>Meeting&rsquo;s <code>cProductServices</code> was marked required in <code>entityDefs/Meeting.json</code> when the prefill arrived, so both activity forms validate alike.</li></ul>
   </div>
 </details>
 </section>
@@ -1465,7 +1471,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   <div class="dev-inner">
     <p class="dev-lede">Two client views: one copies the parent&rsquo;s name into the meeting name, the other puts you on the invite.</p>
     <div class="dev-h">Files touched</div>
-    <ul class="dev-list"><li><code>client/custom/src/views/meeting/record/edit.js</code> <span class="k">&mdash;</span> name autofill and attendee prefill</li><li><code>client/custom/src/views/meeting/record/edit-small.js</code> <span class="k">&mdash;</span> extends the edit view for quick-create</li><li><code>custom/Espo/Custom/Resources/metadata/clientDefs/Meeting.json</code> <span class="k">&mdash;</span> registers <code>recordViews.edit</code> and <code>editSmall</code></li></ul>
+    <ul class="dev-list"><li><code>client/custom/src/views/meeting/record/edit.js</code> <span class="k">&mdash;</span> name autofill, attendee prefill and the feature 8 product watchers</li><li><code>client/custom/src/views/meeting/record/edit-small.js</code> <span class="k">&mdash;</span> extends the edit view for quick-create</li><li><code>custom/Espo/Custom/Resources/metadata/clientDefs/Meeting.json</code> <span class="k">&mdash;</span> registers <code>recordViews.edit</code> and <code>editSmall</code></li></ul>
     <div class="dev-h">How it works</div>
     <ul class="dev-list"><li><code>fetchParentName()</code> runs on <code>change:parentId change:parentType</code>, requests <code>&lt;parentType&gt;/&lt;id&gt;?select=id,name</code>, and writes <code>name</code> only while it is empty or still holds a value this view wrote itself.</li><li><code>fillAttendees()</code> runs only for a new meeting with no attendees and sets <code>usersIds / usersNames / usersColumns</code> to the logged-in user.</li></ul>
     <div class="dev-h">If you change it</div>
