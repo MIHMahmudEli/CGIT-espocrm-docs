@@ -1944,7 +1944,7 @@ const html = `<!DOCTYPE html>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
     <span>17 features</span>
-    <span>Updated 11 October 2026</span>
+    <span>Updated 19 October 2026</span>
   </div>
 </header>
 
@@ -2528,7 +2528,7 @@ ${featureRows}
 </section>
 
 <footer>
-  EspoCRM Feature Guide &middot; version 1.5 &middot; updated 11 October 2026
+  EspoCRM Feature Guide &middot; version 1.6 &middot; updated 19 October 2026
 </footer>
 </main>
 </div>
