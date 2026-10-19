@@ -41,7 +41,7 @@ const checks = [
     ['Fifteen improvements', /Fifteen improvements/],
     ['15 features pill', /<span>15 features<\/span>/],
     ['nav has 11. Meetings', />11\. Meetings</],
-    ['nav has 12. New leads', />12\. New leads/],
+    ['nav has 12. New records start with you', />12\. New records start with you/],
     ['nav has 13. Calendar week view', />13\. Calendar week view</],
     ['nav has 14. Find a call by its product', />14\. Find a call by its product</],
     ['nav has 15. Meetings remind you too', />15\. Meetings remind you too</],
@@ -54,6 +54,7 @@ const checks = [
     ['meeting reminders figure', /The reminder when a meeting starts/],
     ['meeting prefill in feature 8', /Meetings behave the same/],
     ['meeting prefill dev note', /the same watchers, on the Meeting form/],
+    ['five-scope assigned-user prefill', /a product, an account,\s+a call, a meeting or a lead/],
 ];
 for (const [label, re] of checks) re.test(h) ? ok(label) : fail(label);
 

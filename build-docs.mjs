@@ -1005,7 +1005,7 @@ client/custom/img/cgit-logo-192.png
 client/custom/src/web-push.js
 client/custom/src/helpers/web-push-manager.js
 client/custom/src/handlers/create-task-prefill.js
-client/custom/src/handlers/lead/defaults-preparator.js
+client/custom/src/handlers/defaults-preparator.js
 client/custom/src/views/site/navbar/web-push.js
 client/custom/src/views/modals/select-product-service.js
 client/custom/src/views/calendar/calendar.js
@@ -1059,7 +1059,7 @@ const features = [
     ['9', 'Duplicate, then describe', 'Duplicating a call copies everything except the description, which arrives empty &mdash; you must fill it in before the call can be saved.', '#d'],
     ['10', 'Local date and time format', 'While typing, dates read 02/10/2026 and times read 02:30 PM, in Dhaka time.', '#e'],
     ['11', 'Meetings start faster', 'The meeting name fills itself in and you are already on the invite.', '#f'],
-    ['12', 'New leads start with you', 'A brand-new lead already has you set as its Assigned User, so one less field has to be filled in.', '#lead-owner'],
+    ['12', 'New records start with you', 'Opening any create form &mdash; product, account, call, meeting or lead &mdash; already has you set as its Assigned User.', '#lead-owner'],
     ['13', 'Week view matches the month', 'Today is marked, every day is headed by a weekday and a date, and each entry is a card showing its time and status.', '#calendar-week'],
     ['14', 'Find a call by its product', 'The search box on the Calls list matches the product a call is about, not only the call name.', '#calls-search'],
     ['15', 'Meetings remind you too', 'When a meeting&rsquo;s Date Start arrives, the assigned user is told &mdash; pop-up, notification and desktop alert, just like a call.', '#meeting-reminders'],
@@ -1282,19 +1282,21 @@ const DEV = [
   ],
 }],
 ['lead-owner', '12', {
-  lede: 'A model-default preparator: core asks it for values just before a new Lead form opens.',
+  lede: 'One model-default preparator, wired into five scopes: core asks it for values just before a new form opens.',
   files: [
-    ['client/custom/src/handlers/lead/defaults-preparator.js', 'returns <code>assignedUserId</code> and <code>assignedUserName</code>'],
-    ['custom/Espo/Custom/Resources/metadata/clientDefs/Lead.json', 'the key <code>modelDefaultsPreparator</code>'],
+    ['client/custom/src/handlers/defaults-preparator.js', 'returns <code>assignedUserId</code> and <code>assignedUserName</code>'],
+    ['custom/Espo/Custom/Resources/metadata/clientDefs/{Account,Call,CProductService,Lead,Meeting}.json', 'the key <code>modelDefaultsPreparator</code> in each'],
   ],
   how: [
     'Core <code>helpers/model/defaults-populator</code> calls <code>prepare(model)</code> for a new model only, then applies the result silently; anything supplied in the URL is applied afterwards and wins.',
-    'The handler returns <code>{}</code> when the lead already has an owner, or when the entity has no <code>assignedUser</code> field.',
+    'The handler returns <code>{}</code> when the record already has an owner, or when the entity has no <code>assignedUser</code> field.',
+    'Account got a clientDefs file of its own for the wiring; the other four already had one.',
+    'The handler began life under <code>handlers/lead/</code> and was moved up one level when the other four scopes joined.',
     'Teams are not touched.',
   ],
   change: [
     '<code>prepare()</code> must never throw &mdash; the create form awaits it.',
-    'Another entity needs its own <code>clientDefs</code> entry pointing at its own handler.',
+    'Adding a sixth entity is one line in its clientDefs &mdash; the same handler serves them all.',
   ],
 }],
 ['calendar-week', '13', {
@@ -1835,7 +1837,7 @@ const html = `<!DOCTYPE html>
     <li><a href="#d">9. Duplicate calls</a></li>
     <li><a href="#e">10. Dates &amp; times</a></li>
     <li><a href="#f">11. Meetings</a></li>
-    <li><a href="#lead-owner">12. New leads start with you</a></li>
+    <li><a href="#lead-owner">12. New records start with you</a></li>
     <li><a href="#calendar-week">13. Calendar week view</a></li>
     <li><a href="#calls-search">14. Find a call by its product</a></li>
     <li><a href="#meeting-reminders">15. Meetings remind you too</a></li>
@@ -2232,10 +2234,11 @@ ${featureRows}
 
 <!-- ==================================================================== 12 -->
 <section id="lead-owner">
-  <h2><span class="tag">12</span>A new lead starts with you as its owner</h2>
-  <p class="lede">Opening a brand-new lead used to leave <b>Assigned User</b> empty, so a
-  new lead arrived with nobody on it and it was easy to forget who was meant to look after
-  it. It now arrives already set to <b>you</b> &mdash; whoever happens to be signed in.</p>
+  <h2><span class="tag">12</span>New records start with you as their owner</h2>
+  <p class="lede">Opening any of the five create forms &mdash; a product, an account,
+  a call, a meeting or a lead &mdash; used to leave <b>Assigned User</b> empty, so a new
+  record arrived with nobody on it and it was easy to forget who was meant to look after
+  it. They now arrive already set to <b>you</b> &mdash; whoever happens to be signed in.</p>
 
   ${shot('A new lead, with its owner already set', M1,
       li(1, 'Assigned User already holds the person creating the lead') +
@@ -2243,24 +2246,25 @@ ${featureRows}
 
   <div class="tablewrap">
   <table>
-    <thead><tr><th style="width:44%">What you do</th><th>Who the lead belongs to</th></tr></thead>
+    <thead><tr><th style="width:44%">What you do</th><th>Who the record belongs to</th></tr></thead>
     <tbody>
-      <tr><td>create a lead</td><td>you &mdash; set before the form even opens</td></tr>
-      <tr><td>open a lead that already exists</td><td>unchanged &mdash; only new leads are affected</td></tr>
+      <tr><td>open any of the five create forms</td><td>you &mdash; set before the form even opens</td></tr>
+      <tr><td>open a record that already exists</td><td>unchanged &mdash; only new records are affected</td></tr>
       <tr><td>pick somebody else, then save</td><td>the person you picked &mdash; the starting value is only a suggestion</td></tr>
       <tr><td>leave it alone and press Save</td><td>you</td></tr>
-      <tr><td>sign in as somebody else and create a lead</td><td>that person &mdash; it is always whoever is signed in</td></tr>
+      <tr><td>sign in as somebody else and create a record</td><td>that person &mdash; it is always whoever is signed in</td></tr>
       <tr><td>use the smaller pop-up form instead</td><td>you &mdash; it behaves exactly the same way</td></tr>
     </tbody>
   </table>
   </div>
 
   <ul class="bullets">
-    <li class="yes">One less field to fill in on every lead you create.</li>
+    <li class="yes">One less field to fill in on every record you create.</li>
+    <li class="yes">The five are product, account, call, meeting and lead &mdash; every other entity keeps core&rsquo;s behaviour.</li>
     <li class="yes">It is only a starting point &mdash; nothing is saved until you press Save.</li>
-    <li class="yes">The lead goes on showing you as its owner until somebody changes it.</li>
-    <li class="no">Leads brought in by import, by another integration or by a workflow are not touched.</li>
-    <li class="no">Existing leads are never re-assigned &mdash; the rule applies only while a lead is being created.</li>
+    <li class="yes">The record goes on showing you as its owner until somebody changes it.</li>
+    <li class="no">Records brought in by import, by another integration or by a workflow are not touched.</li>
+    <li class="no">Existing records are never re-assigned &mdash; the rule applies only while a record is being created.</li>
   </ul>
 </section>
 
