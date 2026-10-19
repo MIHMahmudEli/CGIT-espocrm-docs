@@ -61,8 +61,17 @@ const checks = [
     ['lead source figure', /The Details panel of a new lead/],
     ['meetings product section', /id="meetings-ps"/],
     ['meetings product figure', /The Meetings list/],
+    ['website search in feature 2', /Part of a website is enough/],
+    ['website search table row', /<code>cgitapps<\/code>/],
+    ['website search dev note', /turns a field into a contains match/],
 ];
 for (const [label, re] of checks) re.test(h) ? ok(label) : fail(label);
+
+/* 7c. generator-side file tree keeps the new selectDefs pair */
+const src = fs.readFileSync('C:/xampp_lite_8_5/www/espocrm-docs/build-docs.mjs', 'utf8');
+/Resources\/metadata\/selectDefs\/&#123;Call,Lead&#125;\.json/.test(src)
+    ? ok('website in file tree')
+    : fail('website in file tree');
 
 const rows = (h.match(/<td class="num">/g) || []).length;
 rows === 17 ? ok('feature table has 17 rows') : fail(`feature table rows=${rows}, expected 17`);

@@ -1044,7 +1044,7 @@ custom/Espo/Custom/Resources/metadata/entityDefs/&#123;Call,CProductService,Lead
 custom/Espo/Custom/Resources/metadata/logicDefs/Call.json
 custom/Espo/Custom/Resources/metadata/recordDefs/&#123;CProductService,Lead&#125;.json
 custom/Espo/Custom/Resources/metadata/scopes/&#123;Call,CProductService,Lead,PushSubscription&#125;.json
-custom/Espo/Custom/Resources/metadata/selectDefs/Call.json
+custom/Espo/Custom/Resources/metadata/selectDefs/&#123;Call,Lead&#125;.json
 custom/Espo/Custom/Resources/i18n/&#123;37 locales&#125;/CProductService.json
 custom/Espo/Custom/Resources/i18n/en_US/&#123;Call,Global,Lead,Meeting,ScheduledJob,Task&#125;.json
 custom/Espo/Custom/Tools/Activities/&#123;Service.php,Api/Get.php,Api/GetListTyped.php&#125;
@@ -1101,7 +1101,7 @@ const testRows = TESTS
 
 const features = [
     ['1', 'Product Service catalogue', 'A new record type listing everything you sell, and the link between leads, calls and products.', '#catalogue'],
-    ['2', 'Search and filter the lead list', 'Type a phone number to find a lead, or narrow the list down to one product service.', '#find'],
+    ['2', 'Search and filter the lead list', 'Type a phone number or part of a website to find a lead, or narrow the list down to one product service.', '#find'],
     ['3', 'Opportunity amount fills itself in', 'Picking a product on the lead form works out its price for you, adding up several products.', '#amount'],
     ['4', 'Desktop notifications', 'A bell in the top bar turns on alerts that reach you even when the browser is closed.', '#a'],
     ['5', 'History shows only what matters', 'A record&rsquo;s history now lists only the activity belonging to its own product service.', '#b'],
@@ -1147,13 +1147,16 @@ const DEV = [
   ],
 }],
 ['find', '2', {
-  lede: 'Two metadata files: one widens what the list search looks at, the other puts the product filter first.',
+  lede: 'Three metadata files: one widens what the list search looks at, one teaches it to match inside a website, and one puts the product filter first.',
   files: [
     ['custom/Espo/Custom/Resources/metadata/entityDefs/Lead.json', '<code>collection.textFilterFields</code> and <code>collection.fullTextSearch</code>'],
+    ['custom/Espo/Custom/Resources/metadata/selectDefs/Lead.json', '<code>textFilterUseContainsAttributeList</code> &mdash; the website matches anywhere in the text'],
     ['custom/Espo/Custom/Resources/layouts/Lead/filters.json', 'order of the filter panel'],
   ],
   how: [
-    '<code>textFilterFields</code> adds first name, last name, street, city and phone on top of the core three; each one becomes a <code>LIKE</code> clause built by <code>Espo\\Core\\Select\\Text\\DefaultFilter</code>.',
+    '<code>textFilterFields</code> adds first name, last name, street, city, phone and website on top of the core three; each one becomes a <code>LIKE</code> clause built by <code>Espo\\Core\\Select\\Text\\DefaultFilter</code>.',
+    'A plain <code>LIKE</code> only matches from the <em>start</em> of the value, so <code>cgit</code> would never find <code>https://cgitapps.com</code>. <code>textFilterUseContainsAttributeList</code> turns a field into a contains match &mdash; the same hook feature&nbsp;14 uses for the call product name.',
+    'The website is a <code>url</code>-type field, so it stays off the fulltext index and is reached by the <code>LIKE</code> path alone; from four characters up, any fragment of the link finds the lead.',
     'For a phone field the server only runs the match when the input is digits, spaces or <code>+ ( ) -</code>, so typing <code>abc</code> never matches a phone number.',
     '<code>fullTextSearch: true</code> also switches global search to relevance order.',
   ],
@@ -2012,9 +2015,9 @@ ${featureRows}
 <!-- ==================================================================== 2 -->
 <section id="find">
   <h2><span class="tag">2</span>Searching and filtering the lead list</h2>
-  <p class="lede">Two changes make the Leads list quicker to work with: you can type a
-  phone number into the search box and get the right person, and you can cut the list
-  down to the leads belonging to one product service.</p>
+  <p class="lede">Three changes make the Leads list quicker to work with: you can type a
+  phone number into the search box and get the right person, you can find a lead by part
+  of its website, and you can cut the list down to the leads belonging to one product service.</p>
 
   ${shot('Finding a lead by typing part of a phone number', G4,
       li(1, 'Type any part of the number &mdash; the country code, the last eight digits or the whole thing') +
@@ -2041,6 +2044,8 @@ ${featureRows}
       <tr><td>Address &mdash; street and city</td><td><code>Dhaka</code></td></tr>
       <tr><td><b>Phone number</b> <span class="new">new</span></td><td><code>01716099707</code>,
           <code>017</code> or <code>1820154087</code></td></tr>
+      <tr><td><b>Website</b> <span class="new">new</span></td><td><code>cgitapps</code>,
+          <code>example.com</code> or <code>https://zz-website</code></td></tr>
     </tbody>
   </table>
   </div>
@@ -2048,6 +2053,8 @@ ${featureRows}
   <ul class="bullets">
     <li class="yes">Part of a number is enough &mdash; the search looks inside the number, so <b>017</b>,
         <b>16099707</b> and a full number all find the same lead.</li>
+    <li class="yes">Part of a website is enough &mdash; the search looks <em>inside</em> the
+        link, so <b>cgitapps</b>, <b>example.com</b> and a full web address all find the same lead.</li>
     <li class="yes">The search box in the application&rsquo;s top bar finds leads by number as well.</li>
     <li class="yes">You can also filter by status, assigned user, team, date, industry and the rest &mdash;
         the product filter simply sits at the top of the list.</li>

@@ -472,7 +472,7 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
     <thead><tr><th>#</th><th>Feature</th><th>In plain words</th></tr></thead>
     <tbody>
 <tr><td class="num">1</td><td><a href="#catalogue">Product Service catalogue</a></td><td>A new record type listing everything you sell, and the link between leads, calls and products.</td></tr>
-<tr><td class="num">2</td><td><a href="#find">Search and filter the lead list</a></td><td>Type a phone number to find a lead, or narrow the list down to one product service.</td></tr>
+<tr><td class="num">2</td><td><a href="#find">Search and filter the lead list</a></td><td>Type a phone number or part of a website to find a lead, or narrow the list down to one product service.</td></tr>
 <tr><td class="num">3</td><td><a href="#amount">Opportunity amount fills itself in</a></td><td>Picking a product on the lead form works out its price for you, adding up several products.</td></tr>
 <tr><td class="num">4</td><td><a href="#a">Desktop notifications</a></td><td>A bell in the top bar turns on alerts that reach you even when the browser is closed.</td></tr>
 <tr><td class="num">5</td><td><a href="#b">History shows only what matters</a></td><td>A record&rsquo;s history now lists only the activity belonging to its own product service.</td></tr>
@@ -550,9 +550,9 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <!-- ==================================================================== 2 -->
 <section id="find">
   <h2><span class="tag">2</span>Searching and filtering the lead list</h2>
-  <p class="lede">Two changes make the Leads list quicker to work with: you can type a
-  phone number into the search box and get the right person, and you can cut the list
-  down to the leads belonging to one product service.</p>
+  <p class="lede">Three changes make the Leads list quicker to work with: you can type a
+  phone number into the search box and get the right person, you can find a lead by part
+  of its website, and you can cut the list down to the leads belonging to one product service.</p>
 
   <figure class="shot"><figcaption class="shot-cap">Finding a lead by typing part of a phone number</figcaption><img class="sshot" loading="lazy" src="ss/Finding a lead by typing part of a phone number.png" alt="Finding a lead by typing part of a phone number"><div class="ui-annot plain"><span>Type any part of the number &mdash; the country code, the last eight digits or the whole thing</span><span>The list reports how many leads matched</span><span>Only the leads that match remain</span></div></figure>
 
@@ -570,6 +570,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
       <tr><td>Address &mdash; street and city</td><td><code>Dhaka</code></td></tr>
       <tr><td><b>Phone number</b> <span class="new">new</span></td><td><code>01716099707</code>,
           <code>017</code> or <code>1820154087</code></td></tr>
+      <tr><td><b>Website</b> <span class="new">new</span></td><td><code>cgitapps</code>,
+          <code>example.com</code> or <code>https://zz-website</code></td></tr>
     </tbody>
   </table>
   </div>
@@ -577,6 +579,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
   <ul class="bullets">
     <li class="yes">Part of a number is enough &mdash; the search looks inside the number, so <b>017</b>,
         <b>16099707</b> and a full number all find the same lead.</li>
+    <li class="yes">Part of a website is enough &mdash; the search looks <em>inside</em> the
+        link, so <b>cgitapps</b>, <b>example.com</b> and a full web address all find the same lead.</li>
     <li class="yes">The search box in the application&rsquo;s top bar finds leads by number as well.</li>
     <li class="yes">You can also filter by status, assigned user, team, date, industry and the rest &mdash;
         the product filter simply sits at the top of the list.</li>
@@ -588,11 +592,11 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <details class="dev" id="dev-find">
   <summary><span class="dev-kicker">For developers</span><span class="dev-t">How feature 2 is built</span></summary>
   <div class="dev-inner">
-    <p class="dev-lede">Two metadata files: one widens what the list search looks at, the other puts the product filter first.</p>
+    <p class="dev-lede">Three metadata files: one widens what the list search looks at, one teaches it to match inside a website, and one puts the product filter first.</p>
     <div class="dev-h">Files touched</div>
-    <ul class="dev-list"><li><code>custom/Espo/Custom/Resources/metadata/entityDefs/Lead.json</code> <span class="k">&mdash;</span> <code>collection.textFilterFields</code> and <code>collection.fullTextSearch</code></li><li><code>custom/Espo/Custom/Resources/layouts/Lead/filters.json</code> <span class="k">&mdash;</span> order of the filter panel</li></ul>
+    <ul class="dev-list"><li><code>custom/Espo/Custom/Resources/metadata/entityDefs/Lead.json</code> <span class="k">&mdash;</span> <code>collection.textFilterFields</code> and <code>collection.fullTextSearch</code></li><li><code>custom/Espo/Custom/Resources/metadata/selectDefs/Lead.json</code> <span class="k">&mdash;</span> <code>textFilterUseContainsAttributeList</code> &mdash; the website matches anywhere in the text</li><li><code>custom/Espo/Custom/Resources/layouts/Lead/filters.json</code> <span class="k">&mdash;</span> order of the filter panel</li></ul>
     <div class="dev-h">How it works</div>
-    <ul class="dev-list"><li><code>textFilterFields</code> adds first name, last name, street, city and phone on top of the core three; each one becomes a <code>LIKE</code> clause built by <code>Espo\Core\Select\Text\DefaultFilter</code>.</li><li>For a phone field the server only runs the match when the input is digits, spaces or <code>+ ( ) -</code>, so typing <code>abc</code> never matches a phone number.</li><li><code>fullTextSearch: true</code> also switches global search to relevance order.</li></ul>
+    <ul class="dev-list"><li><code>textFilterFields</code> adds first name, last name, street, city, phone and website on top of the core three; each one becomes a <code>LIKE</code> clause built by <code>Espo\Core\Select\Text\DefaultFilter</code>.</li><li>A plain <code>LIKE</code> only matches from the <em>start</em> of the value, so <code>cgit</code> would never find <code>https://cgitapps.com</code>. <code>textFilterUseContainsAttributeList</code> turns a field into a contains match &mdash; the same hook feature&nbsp;14 uses for the call product name.</li><li>The website is a <code>url</code>-type field, so it stays off the fulltext index and is reached by the <code>LIKE</code> path alone; from four characters up, any fragment of the link finds the lead.</li><li>For a phone field the server only runs the match when the input is digits, spaces or <code>+ ( ) -</code>, so typing <code>abc</code> never matches a phone number.</li><li><code>fullTextSearch: true</code> also switches global search to relevance order.</li></ul>
     <div class="dev-h">If you change it</div>
     <ul class="dev-list"><li>A field must exist in <code>entityDefs</code> first &mdash; an unknown name in <code>textFilterFields</code> is skipped silently.</li><li><code>filters.json</code> only sets the order; the widget each filter uses comes from core field metadata.</li></ul>
   </div>
