@@ -20,15 +20,15 @@ const missing = [...new Set(hrefs.filter((a) => !ids.includes(a)))];
 missing.length === 0 ? ok(`anchors resolve (${new Set(hrefs).size} unique)`)
     : fail('broken anchors: ' + missing.join(','));
 
-/* 4. fifteen numbered sections in order */
+/* 4. seventeen numbered sections in order */
 const tags = [...h.matchAll(/<span class="tag">(\d+)<\/span>/g)].map((m) => +m[1]);
-const want = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-JSON.stringify(tags) === JSON.stringify(want) ? ok('section tags 1..15 in order')
+const want = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+JSON.stringify(tags) === JSON.stringify(want) ? ok('section tags 1..17 in order')
     : fail('section tags: ' + JSON.stringify(tags));
 
 /* 5. figure count and captions present */
 const figs = (h.match(/<figure class="shot">/g) || []).length;
-figs === 23 ? ok('23 figures') : fail(`figures=${figs}, expected 23`);
+figs === 25 ? ok('25 figures') : fail(`figures=${figs}, expected 25`);
 
 /* 6. currency entity, no BDT+digits in the body */
 const ent = (h.match(/&#2547;/g) || []).length;
@@ -38,13 +38,15 @@ bdt === 0 ? ok('no BDT+digits') : fail(`BDT+digits x${bdt}`);
 
 /* 7. feature counts in prose */
 const checks = [
-    ['Fifteen improvements', /Fifteen improvements/],
-    ['15 features pill', /<span>15 features<\/span>/],
+    ['Seventeen improvements', /Seventeen improvements/],
+    ['17 features pill', /<span>17 features<\/span>/],
     ['nav has 11. Meetings', />11\. Meetings</],
     ['nav has 12. New records start with you', />12\. New records start with you/],
     ['nav has 13. Calendar week view', />13\. Calendar week view</],
     ['nav has 14. Find a call by its product', />14\. Find a call by its product</],
     ['nav has 15. Meetings remind you too', />15\. Meetings remind you too</],
+    ['nav has 16. Facebook and WhatsApp on the lead form', />16\. Facebook and WhatsApp on the lead form/],
+    ['nav has 17. Meetings show their product', />17\. Meetings show their product/],
     ['week title range', /4 Oct 2026 &ndash; 10 Oct 2026/],
     ['Brave push note', /brave:\/\/settings\/privacy/],
     ['Brave push setting', /Use Google services for\s+push messaging/],
@@ -55,15 +57,19 @@ const checks = [
     ['meeting prefill in feature 8', /Meetings behave the same/],
     ['meeting prefill dev note', /the same watchers, on the Meeting form/],
     ['five-scope assigned-user prefill', /a product, an account,\s+a call, a meeting or a lead/],
+    ['lead source section', /id="lead-source"/],
+    ['lead source figure', /The Details panel of a new lead/],
+    ['meetings product section', /id="meetings-ps"/],
+    ['meetings product figure', /The Meetings list/],
 ];
 for (const [label, re] of checks) re.test(h) ? ok(label) : fail(label);
 
 const rows = (h.match(/<td class="num">/g) || []).length;
-rows === 15 ? ok('feature table has 15 rows') : fail(`feature table rows=${rows}, expected 15`);
+rows === 17 ? ok('feature table has 17 rows') : fail(`feature table rows=${rows}, expected 17`);
 
 /* 7b. one collapsed developer note per feature */
 const devIds = [...h.matchAll(/<details class="dev" id="dev-([^"]+)"/g)].map((m) => m[1]);
-devIds.length === 15 ? ok('15 developer notes') : fail(`developer notes=${devIds.length}, expected 15`);
+devIds.length === 17 ? ok('17 developer notes') : fail(`developer notes=${devIds.length}, expected 17`);
 const secIds = [...h.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]);
 const devMissing = devIds.filter((d) => !secIds.includes(d));
 devMissing.length === 0 ? ok('every developer note matches a section')

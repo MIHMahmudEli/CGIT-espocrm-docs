@@ -444,6 +444,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
     <li><a href="#calendar-week">13. Calendar week view</a></li>
     <li><a href="#calls-search">14. Find a call by its product</a></li>
     <li><a href="#meeting-reminders">15. Meetings remind you too</a></li>
+    <li><a href="#lead-source">16. Facebook and WhatsApp on the lead form</a></li>
+    <li><a href="#meetings-ps">17. Meetings show their product</a></li>
     <li><a href="#status">Quality &amp; safety</a></li>
   </ol>
 </nav>
@@ -451,11 +453,11 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <main>
 <header class="doc">
   <h1>EspoCRM Feature Guide</h1>
-  <p class="sub">Fifteen improvements made to this EspoCRM instance, explained in plain
+  <p class="sub">Seventeen improvements made to this EspoCRM instance, explained in plain
   language with a picture of each screen.</p>
   <div class="meta">
     <span>EspoCRM 10.0.8</span>
-    <span>15 features</span>
+    <span>17 features</span>
     <span>Updated 11 October 2026</span>
   </div>
 </header>
@@ -484,6 +486,8 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
 <tr><td class="num">13</td><td><a href="#calendar-week">Week view matches the month</a></td><td>Today is marked, every day is headed by a weekday and a date, and each entry is a card showing its time and status.</td></tr>
 <tr><td class="num">14</td><td><a href="#calls-search">Find a call by its product</a></td><td>The search box on the Calls list matches the product a call is about, not only the call name.</td></tr>
 <tr><td class="num">15</td><td><a href="#meeting-reminders">Meetings remind you too</a></td><td>When a meeting&rsquo;s Date Start arrives, the assigned user is told &mdash; pop-up, notification and desktop alert, just like a call.</td></tr>
+<tr><td class="num">16</td><td><a href="#lead-source">Facebook and WhatsApp on the lead form</a></td><td>Source gains Facebook and Whatsapp, and a phone number can carry a Whatsapp label of its own.</td></tr>
+<tr><td class="num">17</td><td><a href="#meetings-ps">Meetings show their product service</a></td><td>Every meeting carries its product, in its own column on the Meetings list &mdash; just like a call.</td></tr>
     </tbody>
   </table>
   </div>
@@ -1937,6 +1941,127 @@ table.dt td.now{background:#f2f7ff;color:#1f5fbd;font-weight:700}
     <ul class="dev-list"><li>The job reads <code>scopes.Meeting.activityStatusList</code> (Planned) and asks for every meeting whose <code>dateStart</code> is at or before now but inside the last <code>reminderPastHours</code> (default 24).</li><li>A datetime marker field remembers which Date Start was already notified; a matching value short-circuits, so a scheduler that runs every minute produces exactly one notification.</li><li>When the meeting is rescheduled the old notification row is deleted before the new one is created, so the panel never shows a stale time.</li><li>Delivery goes through the shared NotificationService: persistent Notification, popup Reminder, WebSocket refresh and Web Push &mdash; category <code>meeting</code>, which already existed in the push preferences, so meeting pushes are distinguishable from call pushes.</li><li>The scheduled job row is created by the metadata entry (<code>isDefault</code>) on install; on an existing install create it once from Admin &rarr; Scheduled Jobs or the API.</li></ul>
     <div class="dev-h">If you change it</div>
     <ul class="dev-list"><li>Clear the cache after editing any of the metadata files.</li><li>The marker column is a plain datetime on the meeting table; removing the field means dropping the column and the marker comparisons together.</li><li><code>reminderPastHours</code> in the config widens or narrows the catch-up window for both the call and the meeting reminder.</li><li>A third copy of this pattern (Task reminders) would mean three near-identical jobs &mdash; at that point extract a shared base job.</li></ul>
+  </div>
+</details>
+</section>
+
+<!-- ================================================16 -->
+<section id="lead-source">
+  <h2><span class="tag">16</span>Facebook and WhatsApp on the lead form</h2>
+  <p class="lede">Two of the ways leads actually arrive were missing from the form. The
+  <b>Source</b> dropdown now lists <b>Facebook</b> and <b>Whatsapp</b> alongside the
+  built-in entries, and the small type list next to <b>Phone</b> gained a <b>Whatsapp</b>
+  label, so a WhatsApp number can say what it is.</p>
+
+  <figure class="shot"><figcaption class="shot-cap">The Details panel of a new lead</figcaption>
+<div class="ui">
+  <div class="ui-card">
+    <div class="ui-card-h">Details</div>
+    <div class="ui-card-b">
+      <div class="ui-row">
+        <div class="ui-field"><span class="ui-lab">Source <sup class="ui-num">1</sup></span>
+          <div class="ui-in filled">Facebook <span class="ui-mag">&#9662;</span></div></div>
+        <div class="ui-field"><span class="ui-lab">Status</span>
+          <div class="ui-in">New <span class="ui-mag">&#9662;</span></div></div>
+      </div>
+      <div class="ui-row">
+        <div class="ui-field"><span class="ui-lab">Phone <sup class="ui-num">2</sup></span>
+          <div class="ui-in filled"><span class="ui-badge">Whatsapp</span> +880 1711 000000</div></div>
+      </div>
+    </div>
+  </div>
+</div><div class="ui-annot"><span><b>1</b> Source now offers Facebook and Whatsapp, before Others</span><span><b>2</b> The phone type list gained Whatsapp, between Fax and Other</span></div></figure>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th style="width:44%">Where</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr><td><b>Source</b> on the lead form</td><td>two more entries &mdash; <b>Whatsapp</b> and <b>Facebook</b> &mdash; sitting before Others</td></tr>
+      <tr><td><b>Phone</b>&rsquo;s type list</td><td>a <b>Whatsapp</b> label between Fax and Other, so the number says it is a WhatsApp one</td></tr>
+      <tr><td>Filters and lists</td><td>the new sources appear everywhere the source list does &mdash; filter by Facebook with no extra setup</td></tr>
+      <tr><td>Leads already saved</td><td>untouched &mdash; their source keeps whatever it had</td></tr>
+      <tr><td>Other entities</td><td>unchanged &mdash; these two lists belong to the lead alone</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ul class="bullets">
+    <li class="yes">An empty source is still allowed &mdash; the first entry in the list is deliberately blank.</li>
+    <li class="yes">Both lists are plain labels: renaming Whatsapp to WhatsApp everywhere is a one-word change.</li>
+    <li class="no">The phone type is a label only &mdash; it does not dial or open WhatsApp for you.</li>
+  </ul>
+
+<details class="dev" id="dev-lead-source">
+  <summary><span class="dev-kicker">For developers</span><span class="dev-t">How feature 16 is built</span></summary>
+  <div class="dev-inner">
+    <p class="dev-lede">Two option lists in one entityDefs file, plus their display labels in the lead language file.</p>
+    <div class="dev-h">Files touched</div>
+    <ul class="dev-list"><li><code>custom/Espo/Custom/Resources/metadata/entityDefs/Lead.json</code> <span class="k">&mdash;</span> <code>fields.source.options</code> and <code>fields.phoneNumber.typeList</code></li><li><code>custom/Espo/Custom/Resources/i18n/en_US/Lead.json</code> <span class="k">&mdash;</span> the display labels, under <code>options</code></li></ul>
+    <div class="dev-h">How it works</div>
+    <ul class="dev-list"><li>An <code>options</code> list on a select field replaces core&rsquo;s list outright; the empty string stays first so Source can still be left unset.</li><li><code>typeList</code> does the same for the phone field&rsquo;s type dropdown.</li><li>The i18n <code>options</code> block maps every stored value to what is shown; a value with no label would render as its raw name.</li><li>The labels here read exactly like the values, so a rename means editing both files together.</li></ul>
+    <div class="dev-h">If you change it</div>
+    <ul class="dev-list"><li>Clear the cache after editing either file &mdash; both are metadata, not code.</li><li>A lead saved with a value that is later removed from the list still shows the old raw value.</li><li>Dropping Whatsapp from <code>typeList</code> does not strip it from numbers already saved with that type.</li></ul>
+  </div>
+</details>
+</section>
+
+<!-- ================================================17 -->
+<section id="meetings-ps">
+  <h2><span class="tag">17</span>Every meeting shows its product service</h2>
+  <p class="lede">Meetings now carry their product exactly the way calls do. The Meetings
+  list has its own <b>Product Services</b> column, sitting between Parent and Status, so
+  the product a meeting is about can be read straight from the list &mdash; and the field
+  is required, so no meeting is ever filed against nothing at all.</p>
+
+  <figure class="shot"><figcaption class="shot-cap">The Meetings list</figcaption>
+<div class="ui">
+  
+  <div class="ui-top">
+    <span class="ui-logo">EspoCRM</span>
+    <span class="ui-spacer"></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35"/></svg></span>
+    <span class="ui-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+    <span class="ui-ic bell"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+    <span class="ui-ic av">A</span>
+  </div>
+  <div class="ui-crumbs">Meetings</div>
+  <div class="ui-search">
+    <div class="ui-sgrp">
+      <span class="ui-sin ph">Search&hellip;</span>
+      <span class="ui-sbtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35"/></svg></span>
+      <span class="ui-sbtn last">&#8942;</span>
+    </div>
+  </div>
+  <div class="ui-ltop">
+    <span class="ui-btn">Actions</span>
+    <span class="ui-spacer"></span>
+    <span class="ui-total">2 records found</span>
+  </div>
+  <div class="ui-lwrap">
+    <table class="lt">
+      <thead><tr><th>Name <sup class="ui-num">1</sup></th><th>Parent</th>
+        <th>Product Services <sup class="ui-num">2</sup></th>
+        <th>Status</th><th>Date Start</th><th>Assigned User</th></tr></thead>
+      <tbody>
+        <tr><td class="lk">Weekly sync</td><td>Mohsin Eli</td><td>Y <sup class="ui-num">3</sup></td>
+            <td><span class="bdg">Planned</span></td><td>Today 11:00 AM</td><td>Admin</td></tr>
+        <tr><td class="lk">Quarterly review</td><td>MIH Jihad</td><td>X</td>
+            <td><span class="bdg">Held</span></td><td>Yesterday 03:00 PM</td><td>Admin</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div><div class="ui-annot"><span><b>1</b> Name, Parent, Status, Date Start and Assigned User are as they were</span><span><b>2</b> A <b>Product Services</b> column sits between Parent and Status</span><span><b>3</b> The product each meeting is about &mdash; Y or X &mdash; readable straight from the list</span></div></figure>
+
+<details class="dev" id="dev-meetings-ps">
+  <summary><span class="dev-kicker">For developers</span><span class="dev-t">How feature 17 is built</span></summary>
+  <div class="dev-inner">
+    <p class="dev-lede">The same three-file pattern as the call column: a link field, a list layout and a label.</p>
+    <div class="dev-h">Files touched</div>
+    <ul class="dev-list"><li><code>custom/Espo/Custom/Resources/metadata/entityDefs/Meeting.json</code> <span class="k">&mdash;</span> <code>cProductServices</code>, <code>linkMultiple</code>, required</li><li><code>custom/Espo/Custom/Resources/layouts/Meeting/list.json</code> <span class="k">&mdash;</span> the Product Services column, width 16, after Parent</li><li><code>custom/Espo/Custom/Resources/i18n/en_US/Meeting.json</code> <span class="k">&mdash;</span> the column label</li></ul>
+    <div class="dev-h">How it works</div>
+    <ul class="dev-list"><li>The link is <code>hasMany</code> through relation <code>cMeetingProductService</code>, declared on both ends so the two records stay in step.</li><li>The meeting list layout is the call list&rsquo;s twin &mdash; same columns, same widths &mdash; so the two activity lists read identically.</li><li>Nothing visible lives in JavaScript; like section 6, the column is read straight from layout JSON.</li></ul>
+    <div class="dev-h">If you change it</div>
+    <ul class="dev-list"><li>Removing <code>required: true</code> reopens the option of saving a meeting with no product.</li><li>Layout edits need Admin &rarr; Clear Cache before the list rereads <code>layouts/Meeting/list.json</code>.</li></ul>
   </div>
 </details>
 </section>
